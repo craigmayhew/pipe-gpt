@@ -1,8 +1,24 @@
 use clap::{App, Arg};
-use openai_api_rust::*;
-use openai_api_rust::chat::*;
+use openai_api_rust::{*,chat::*};
 use reqwest;
 use std::io::{self, Read};
+
+fn initialise_chat_body (conversation_messages: Vec<Message>) -> ChatBody {
+    ChatBody {
+        model: "gpt-4".to_string(),
+        max_tokens: Some(200),
+        temperature: Some(0_f32),
+        top_p: Some(0_f32),
+        n: Some(1),
+        stream: Some(false),
+        stop: None,
+        presence_penalty: None,
+        frequency_penalty: None,
+        logit_bias: None,
+        user: None,
+        messages: conversation_messages.clone(),
+    }
+}
 
 async fn send_to_gpt4(input: &str, prepend: &str) -> Result<String, reqwest::Error> {
     let mut conversation_messages = vec![
@@ -16,20 +32,7 @@ async fn send_to_gpt4(input: &str, prepend: &str) -> Result<String, reqwest::Err
     // You can also hadcode through `Auth::new(<your_api_key>)`, but it is not recommended.
     let auth = Auth::from_env().unwrap();
     let openai = OpenAI::new(auth, "https://api.openai.com/v1/");
-    let body = ChatBody {
-        model: "gpt-4".to_string(),
-        max_tokens: Some(200),
-        temperature: Some(0_f32),
-        top_p: Some(0_f32),
-        n: Some(1),
-        stream: Some(false),
-        stop: None,
-        presence_penalty: None,
-        frequency_penalty: None,
-        logit_bias: None,
-        user: None,
-        messages: conversation_messages.clone(),
-    };
+    let body = initialise_chat_body(conversation_messages);
     let rs = openai.chat_completion_create(&body);
     let choice = rs.unwrap().choices;
     let message = &choice[0].message.as_ref().unwrap();
