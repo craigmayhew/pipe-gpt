@@ -56,11 +56,7 @@ async fn main() {
         )
         .get_matches();
 
-    
-    let prepend = match matches.value_of("prepend") {
-        Some(prepend_text) => prepend_text,
-        None => "",
-    };
+    let prepend = matches.value_of("prepend").unwrap_or("");
 
     let mut input = String::new();
     io::stdin().read_to_string(&mut input).expect("Failed to read from stdin");
