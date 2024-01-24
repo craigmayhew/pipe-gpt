@@ -6,9 +6,9 @@ use std::io::{self, Read};
 fn initialise_chat_body (conversation_messages: Vec<Message>) -> ChatBody {
     ChatBody {
         model: "gpt-4".to_string(),
-        max_tokens: Some(200),
-        temperature: Some(0_f32),
-        top_p: Some(0_f32),
+        max_tokens: Some(4096),
+        temperature: Some(0.6_f32),
+        top_p: Some(0.95_f32),
         n: Some(1),
         stream: Some(false),
         stop: None,
