@@ -1,4 +1,4 @@
-use clap::{App, Arg};
+use clap::{arg, command};
 use openai_api_rust::{*,chat::*};
 use reqwest;
 use std::io::{self, Read};
@@ -42,21 +42,20 @@ async fn send_to_gpt4(input: &str, prepend: &str) -> Result<String, reqwest::Err
 
 #[tokio::main]
 async fn main() {
-    let matches = App::new("pipe-gpt")
+    let matches = command!() // requires `cargo` feature
         .version("0.1")
-        .author("Craig")
+        .author("Craig Mayhew")
         .about("Sends piped content to GPT-4")
         .arg(
-            Arg::with_name("prepend")
-                .short('p')
-                .long("prepend")
-                .value_name("TEXT")
-                .help("Text to prepend to the piped content e.g. \"find the pattern\"")
-                .takes_value(true),
+            arg!(
+                -p [prepend] "Text to prepend to the piped content e.g. \"find the pattern\""
+            )
+            .required(false)
         )
         .get_matches();
 
-    let prepend = matches.value_of("prepend").unwrap_or("");
+    let empty_string = String::from("");
+    let prepend = matches.get_one::<String>("prepend").unwrap_or(&empty_string);
 
     let mut input = String::new();
     io::stdin().read_to_string(&mut input).expect("Failed to read from stdin");
