@@ -1,6 +1,12 @@
 use clap::{arg, command};
-use openai_api_rust::{*,chat::*};
 use colored::Colorize;
+use openai_api_rust::{
+    Auth,
+    chat::{ChatApi,ChatBody},
+    Message,
+    OpenAI,
+    Role,
+};
 use reqwest;
 use std::io::{self, Read};
 
