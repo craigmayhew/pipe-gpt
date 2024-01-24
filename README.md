@@ -55,8 +55,9 @@ cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "improv
 ```
 
 ## ToDo
- - Output text could be in colour
  - Support arguments such as temperature
+ - Add unit tests
+ - Add documentation
  - Support roles such as "software developer", "data scientist" etc
  - Examples of good prompts:
     - "how would you improve this code? include line numbers in your comments so I can tell where you mean"
