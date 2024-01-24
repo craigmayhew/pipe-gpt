@@ -67,7 +67,7 @@ cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "improv
 $env:OPENAI_API_KEY = 'sk-12345abc'
 
 ## Set the open api key env var in linux
-OPENAI_API_KEY='sk-12345abc'
+export OPENAI_API_KEY=sk-12345abc
 
 ## Useful links
  - https://platform.openai.com/account/usage
