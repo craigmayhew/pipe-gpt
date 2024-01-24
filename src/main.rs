@@ -24,7 +24,7 @@ async fn send_to_gpt4(input: &str, prepend: &str) -> Result<String, reqwest::Err
     let mut conversation_messages = vec![
         Message { role: Role::System, content: "You are a helpful assistant.".to_string() },
     ];
-    if prepend != "" {
+    if !prepend.is_empty() {
         conversation_messages.push(Message { role: Role::User, content: prepend.to_string() });
     }
     conversation_messages.push(Message { role: Role::User, content: "the following is piped input from the command line".to_owned() + input });
