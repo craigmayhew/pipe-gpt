@@ -1,7 +1,24 @@
 [package]
-name = "pipe-gpt"
-version = "0.1.0"
+authors = ["Craig Mayhew"]
+categories = ["command-line-utilities"]
+description = "A simple command line utility to pipe content to GPT"
 edition = "2021"
+include = [
+    "**/*.rs",
+    "Cargo.toml",
+]
+keywords = [
+    "cli",
+    "gpt",
+    "gpt4",
+    "openai",
+    "terminal",
+]
+license = "MIT OR Apache-2.0"
+name = "pipe-gpt"
+readme = "README.md"
+repository = "https://github.com/craigmayhew/pipe-gpt"
+version = "0.2.0-alpha"
 
 [dependencies]
 clap = { version = "4.4", features = ["cargo"] } # For command-line argument parsing
