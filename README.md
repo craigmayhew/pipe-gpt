@@ -25,20 +25,42 @@ Here are some suggestions to improve your code:
 
 ### Pipe | GPT for CI
 
+```yaml
+jobs:
+  build:
 
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: cargo build --verbose
+    - name: Run tests
+      run: cargo test --verbose
+    - name: GPT Code Review
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: pwd && find . -path './target' -prune -o -name '*.rs' -exec echo {} \; -exec cat {} \; | ./target/debug/pipe-gpt -p "how would you improve this code? include line numbers in your comments so I can tell where you mean"
+```
+
+Which gives this output in Github Actions CI:
+![Pipe GPT used in CI to give code review recomendations](./imgs/github-workflow-gpt-code-review.png)
+
+## Examples of full commands
+```sh
+cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "how would you improve this code? include line numbers in your comments so I can tell where you mean"
+```
+```sh
+cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "improve the code and only output the replacement code as I will pipe the output directly back into the source file, no explanations, just pure code" > src/main.rs
+```
 
 ## ToDo
-
  - Output text could be in colour
  - Support arguments such as temperature
- - Support reading api key from a file
  - Support roles such as "software developer", "data scientist" etc
  - Examples of good prompts:
     - "how would you improve this code? include line numbers in your comments so I can tell where you mean"
  - Release crate
- - Examples of full commands
-    - `cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "how would you improve this code? include line numbers in your comments so I can tell where you mean"`
-    - `cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "improve the code and only output the replacement code as I will pipe the output directly back into the source file, no explanations, just pure code" > src/main.rs`
 
 ## Set the open api key env var in windows powershell
 $env:OPENAI_API_KEY = 'sk-12345abc'
