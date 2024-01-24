@@ -19,7 +19,7 @@ fn initialise_chat_body (max_tokens: i32, temperature: f32, top_p: f32, conversa
         temperature: Some(temperature),
         top_p: Some(top_p),
         n: Some(1),
-        stream: Some(false),
+        stream: Some(false), // streaming output is not yet supported by this rust app
         stop: None,
         presence_penalty: None,
         frequency_penalty: None,
