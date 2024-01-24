@@ -1,5 +1,4 @@
 use clap::{arg, command, Command};
-use colored::Colorize;
 use openai_api_rust::{
     Auth,
     chat::{ChatApi,ChatBody},
@@ -9,6 +8,10 @@ use openai_api_rust::{
 };
 use reqwest;
 use std::io::{self, Read};
+use termimad::{
+    crossterm::style::Color::Yellow,
+    MadSkin,
+};
 
 /// initialise a ChatBody struct.
 /// Todo: This can probably be part of a lrger refactor so we aren't passing so many tuples back and forther between functions. i.e. we have ChatBody, just use that
@@ -102,7 +105,12 @@ async fn main() {
     io::stdin().read_to_string(&mut input).expect("Failed to read from stdin");
 
     match send_to_gpt4(&input, parsed_arguments).await {
-        Ok(response) => println!("{}", response.green()),
+        Ok(markdown) => {
+            let mut skin = MadSkin::default();
+            skin.code_block.left_margin = 4;
+            skin.set_fg(Yellow);
+            skin.print_text(&markdown)
+        },
         Err(e) => eprintln!("Error: {}", e),
     }
 }

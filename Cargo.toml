@@ -22,7 +22,7 @@ version = "0.2.0-alpha"
 
 [dependencies]
 clap = { version = "4.4", features = ["cargo"] } # For command-line argument parsing
-colored = "2.1" # Set command-line output colours
 openai_api_rust = "0.1.8" # For OpenAI API
 reqwest = "0.11" # For making HTTP requests
+termimad = "0.28" # For rendering text as markdown in terminal
 tokio = { version = "1.35", features = ["full"] } # For asynchronous runtime
