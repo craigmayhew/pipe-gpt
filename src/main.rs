@@ -1,5 +1,6 @@
 use clap::{arg, command};
 use openai_api_rust::{*,chat::*};
+use colored::Colorize;
 use reqwest;
 use std::io::{self, Read};
 
@@ -61,7 +62,7 @@ async fn main() {
     io::stdin().read_to_string(&mut input).expect("Failed to read from stdin");
 
     match send_to_gpt4(&input, prepend).await {
-        Ok(response) => println!("{}", response),
+        Ok(response) => println!("{}", response.green()),
         Err(e) => eprintln!("Error: {}", e),
     }
 }
