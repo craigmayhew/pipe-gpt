@@ -55,7 +55,6 @@ cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "improv
 ```
 
 ## ToDo
- - Support arguments such as temperature
  - Add unit tests
  - Add documentation
  - Support roles such as "software developer", "data scientist" etc
