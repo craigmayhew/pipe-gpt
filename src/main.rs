@@ -16,7 +16,7 @@ fn initialise_chat_body (conversation_messages: Vec<Message>) -> ChatBody {
         frequency_penalty: None,
         logit_bias: None,
         user: None,
-        messages: conversation_messages.clone(),
+        messages: conversation_messages,
     }
 }
 
@@ -61,7 +61,7 @@ async fn main() {
     let mut input = String::new();
     io::stdin().read_to_string(&mut input).expect("Failed to read from stdin");
 
-    match send_to_gpt4(&input,&prepend).await {
+    match send_to_gpt4(&input, prepend).await {
         Ok(response) => println!("{}", response),
         Err(e) => eprintln!("Error: {}", e),
     }
