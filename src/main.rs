@@ -1,4 +1,4 @@
-use clap::{arg, command, Command};
+use clap::{arg, command, Command, value_parser};
 use openai_api_rust::{
     Auth,
     chat::{ChatApi,ChatBody},
@@ -33,8 +33,8 @@ fn initialise_chat_body (max_tokens: i32, temperature: f32, top_p: f32, conversa
 }
 
 /// send request to openai api
-async fn send_to_gpt4(input: &str, arguments: (String, i32, f32, f32)) -> Result<String, reqwest::Error> {
-    let (prepend, max_tokens, temperature, top_p) = arguments;
+async fn send_to_gpt4(input: &str, arguments: (String, i32, f32, f32, bool)) -> Result<String, reqwest::Error> {
+    let (prepend, max_tokens, temperature, top_p, _render_markdown) = arguments;
     let mut conversation_messages = vec![
         Message { role: Role::System, content: "You are a helpful assistant.".to_string() },
     ];
@@ -75,16 +75,24 @@ fn args_setup() -> Command {
                 -m [max_tokens] "Advanced: Adjust token limit up to a maximum of 4096 for GPT4."
             )
             .required(false)
-        ).arg(
+        )
+        .arg(
             arg!(
                 -s [top_p] "Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus sampling parameter."
             )
             .required(false)
         )
+        .arg(
+            arg!(
+                --markdown "Render markdown instead of outputting as plain text."
+            )
+            .required(false)
+            .value_parser(value_parser!(bool))
+        )
 }
 
 /// parse command line arguments, setting to defaults where ommitted
-fn args_read (args_setup: Command) -> (std::string::String, i32, f32, f32) {
+fn args_read (args_setup: Command) -> (std::string::String, i32, f32, f32, bool) {
     let matches = args_setup.get_matches();
     
     let empty_string = String::from("");
@@ -93,23 +101,29 @@ fn args_read (args_setup: Command) -> (std::string::String, i32, f32, f32) {
     let max_tokens = matches.get_one::<i32>("max_tokens").unwrap_or(&4096);
     let temperature = matches.get_one::<f32>("temperature").unwrap_or(&0.6);
     let top_p = matches.get_one::<f32>("top_p").unwrap_or(&0.95);
+    let render_markdown = matches.get_one::<bool>("markdown").unwrap_or(&false);
     
-    (prepend.to_owned(),max_tokens.to_owned(),temperature.to_owned(),top_p.to_owned())
+    (prepend.to_owned(),max_tokens.to_owned(),temperature.to_owned(),top_p.to_owned(),render_markdown.to_owned())
 }
 
 #[tokio::main]
 async fn main() {
     let parsed_arguments = args_read(args_setup());
+    let render_markdown = parsed_arguments.4;
 
     let mut input = String::new();
     io::stdin().read_to_string(&mut input).expect("Failed to read from stdin");
 
     match send_to_gpt4(&input, parsed_arguments).await {
         Ok(markdown) => {
-            let mut skin = MadSkin::default();
-            skin.code_block.left_margin = 4;
-            skin.set_fg(Yellow);
-            skin.print_text(&markdown)
+            if render_markdown {
+                let mut skin = MadSkin::default();
+                skin.code_block.left_margin = 4;
+                skin.set_fg(Yellow);
+                skin.print_text(&markdown)
+            } else {
+                println!("{}", &markdown)
+            }
         },
         Err(e) => eprintln!("Error: {}", e),
     }
