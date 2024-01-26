@@ -87,18 +87,21 @@ fn args_setup() -> Command {
                 -t [temperature] "Advanced: Adjust temperature of response between 0.0 and 1.0. The higher the value, the more likely the generated text will be diverse, but there is a higher possibility of grammar errors and generation of nonsense."
             )
             .required(false)
+            .value_parser(value_parser!(f32))
         )
         .arg(
             arg!(
                 -m [max_tokens] "Advanced: Adjust token limit up to a maximum of 4096 for GPT4."
             )
             .required(false)
+            .value_parser(value_parser!(i32))
         )
         .arg(
             arg!(
                 -s [top_p] "Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus sampling parameter."
             )
             .required(false)
+            .value_parser(value_parser!(f32))
         )
         .arg(
             arg!(
