@@ -1,5 +1,7 @@
 // clap for command line argument parsing
 use clap::{arg, command, Command, value_parser};
+// logging
+use log::{info, debug};
 // openai api
 use openai_api_rust::{
     Auth,
@@ -39,11 +41,15 @@ fn initialise_chat_body (max_tokens: i32, temperature: f32, top_p: f32, conversa
         user: None,
         messages: conversation_messages,
     };
+    
+    info!("ChatBody struct generated");
+    debug!("ChatBody struct: {:?} ", chatbody);
     chatbody
 }
 
 /// send request to openai api
 async fn send_to_gpt4(input: &str, arguments: (String, i32, f32, f32, bool)) -> Result<String, reqwest::Error> {
+    debug!("entered send_to_gpt4()");
     let (prepend, max_tokens, temperature, top_p, _render_markdown) = arguments;
     let mut conversation_messages = vec![
         Message { role: Role::System, content: "You are a helpful assistant.".to_string() },
@@ -59,6 +65,7 @@ async fn send_to_gpt4(input: &str, arguments: (String, i32, f32, f32, bool)) -> 
     let chat_completion = openai.chat_completion_create(&body).expect("chat completion failed");
     let choice = chat_completion.choices;
     let message = &choice[0].message.as_ref().expect("Failed tgo read message from API");
+    debug!("message recieved {:?}", message);
 
     Ok(message.content.to_string())
 }
@@ -117,6 +124,9 @@ fn args_read (args_setup: Command) -> (std::string::String, i32, f32, f32, bool)
 
 #[tokio::main]
 async fn main() {
+    // enable logging
+    env_logger::init();
+
     let parsed_arguments = args_read(args_setup());
     let render_markdown = parsed_arguments.4;
 
