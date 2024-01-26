@@ -9,6 +9,7 @@ use openai_api_rust::{
 use reqwest;
 use std::io::{self, Read};
 use termimad::{
+    gray,
     crossterm::style::Color::Yellow,
     MadSkin,
 };
