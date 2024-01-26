@@ -119,6 +119,7 @@ async fn main() {
             if render_markdown {
                 let mut skin = MadSkin::default();
                 skin.code_block.left_margin = 4;
+                skin.code_block.set_fgbg(gray(17), gray(3));
                 skin.set_fg(Yellow);
                 skin.print_text(&markdown)
             } else {
