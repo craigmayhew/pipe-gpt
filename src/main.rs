@@ -1,4 +1,6 @@
+// clap for command line argument parsing
 use clap::{arg, command, Command, value_parser};
+// openai api
 use openai_api_rust::{
     Auth,
     chat::{ChatApi,ChatBody},
@@ -6,8 +8,11 @@ use openai_api_rust::{
     OpenAI,
     Role,
 };
+// reqwest for http calls
 use reqwest;
+// std io
 use std::io::{self, Read};
+// termimad for markdown rendering in the command line
 use termimad::{
     gray,
     crossterm::style::Color::Yellow,
