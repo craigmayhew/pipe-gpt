@@ -1,3 +1,5 @@
+// atty to determine if data is piped in or not
+use atty::Stream;
 // clap for command line argument parsing
 use clap::{arg, command, Command, value_parser};
 // logging
@@ -131,7 +133,11 @@ async fn main() {
     let render_markdown = parsed_arguments.4;
 
     let mut input = String::new();
-    io::stdin().read_to_string(&mut input).expect("Failed to read from stdin");
+    // if data is being piped in
+    // this check is necessary or we hang the whole program waiting for stdin when none arrives
+    if !atty::is(Stream::Stdin) {
+        io::stdin().read_to_string(&mut input).expect("Failed to read from stdin");
+    }
 
     match send_to_gpt4(&input, parsed_arguments).await {
         Ok(markdown) => {

@@ -21,6 +21,7 @@ repository = "https://github.com/craigmayhew/pipe-gpt"
 version = "0.2.0-alpha"
 
 [dependencies]
+atty = "0.2" # For determining if data is piped to the executable or not
 clap = { version = "4.4", features = ["cargo"] } # For command-line argument parsing
 # logging crates
 env_logger = "0.9"
