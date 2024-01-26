@@ -42,8 +42,7 @@ async fn send_to_gpt4(input: &str, arguments: (String, i32, f32, f32, bool)) -> 
         conversation_messages.push(Message { role: Role::User, content: prepend });
     }
     conversation_messages.push(Message { role: Role::User, content: "the following is piped input from the command line".to_owned() + input });
-    // Load API key from environment OPENAI_API_KEY.
-    // You can also hadcode through `Auth::new(<your_api_key>)`, but it is not recommended.
+    // Load API key from environment OPENAI_API_KEY
     let auth = Auth::from_env().expect("Failed to read auth from environment");
     let openai = OpenAI::new(auth, "https://api.openai.com/v1/");
     let body = initialise_chat_body(max_tokens, temperature, top_p, conversation_messages);
