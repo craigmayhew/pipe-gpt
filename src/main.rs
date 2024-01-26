@@ -66,7 +66,7 @@ async fn send_to_gpt4(input: &str, arguments: (String, i32, f32, f32, bool)) -> 
     let body = initialise_chat_body(max_tokens, temperature, top_p, conversation_messages);
     let chat_completion = openai.chat_completion_create(&body).expect("chat completion failed");
     let choice = chat_completion.choices;
-    let message = &choice[0].message.as_ref().expect("Failed tgo read message from API");
+    let message = &choice[0].message.as_ref().expect("Failed to read message from API");
     debug!("message recieved {:?}", message);
 
     Ok(message.content.to_string())
