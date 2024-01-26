@@ -14,11 +14,14 @@ use termimad::{
     MadSkin,
 };
 
+/// Configuration
+const MODEL: &str = "gpt-4";
+
 /// initialise a ChatBody struct.
 /// Todo: This can probably be part of a lrger refactor so we aren't passing so many tuples back and forther between functions. i.e. we have ChatBody, just use that
 fn initialise_chat_body (max_tokens: i32, temperature: f32, top_p: f32, conversation_messages: Vec<Message>) -> ChatBody {
-    ChatBody {
-        model: "gpt-4".to_string(),
+    let chatbody = ChatBody {
+        model: MODEL.to_owned(),
         max_tokens: Some(max_tokens),
         temperature: Some(temperature),
         top_p: Some(top_p),
@@ -30,7 +33,8 @@ fn initialise_chat_body (max_tokens: i32, temperature: f32, top_p: f32, conversa
         logit_bias: None,
         user: None,
         messages: conversation_messages,
-    }
+    };
+    chatbody
 }
 
 /// send request to openai api
