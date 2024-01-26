@@ -61,6 +61,9 @@ cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "improv
  - Examples of good prompts:
     - `cat main.rs | pipegpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."`
     - `cat main.rs | pipegpt -p "Is this code production ready? If yes reply "Yes". If no, then explain why not. Be concise."`
+    - `cat file.json | pipegpt -p "Convert this JSON to YAML"`
+    - `git diff -- staged | pipegpt -p "Code review this code change"`
+    - `cat french.txt | pipegpt -p "Translate this to English please."` 
  - Release crate
 
 ## Set the open api key env var in windows powershell
