@@ -59,8 +59,8 @@ cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "improv
  - Add documentation
  - Support roles such as "software developer", "data scientist" etc
  - Examples of good prompts:
-    - "How would you improve this code? Include line numbers in your comments so I can tell where you mean."
-    - "Is this code production ready? If yes reply "Yes". If no, then explain why not. Be concise."
+    - `cat main.rs | pipegpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."`
+    - `cat main.rs | pipegpt -p "Is this code production ready? If yes reply "Yes". If no, then explain why not. Be concise."`
  - Release crate
 
 ## Set the open api key env var in windows powershell
