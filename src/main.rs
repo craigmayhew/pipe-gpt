@@ -154,6 +154,35 @@ fn args_read (args_setup: Command) -> (std::string::String, i32, f32, f32, bool)
     (prepend.to_owned(),max_tokens.to_owned(),temperature.to_owned(),top_p.to_owned(),render_markdown.to_owned())
 }
 
+/// # Entry Point for Application
+/// 
+/// - Initializes the application
+/// - Initializes logging
+/// - Makes calls to parse command-line arguments
+/// - Checks for piped input
+/// - Calls fn to send request to API
+/// - Outputs result
+/// 
+/// ## Example Usage
+/// 
+/// ```bash
+/// tail -30 /var/httpd.log | pipe-gpt --p "Is there anything in the http log file I should fix?"
+/// ```
+/// ```bash
+/// cat main.rs | pipegpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."
+/// ```
+/// ```bash
+/// cat main.rs | pipegpt -p "Is this code production ready? If yes reply "Yes". If no, then explain why not. Be concise."
+/// ```
+/// ```bash
+/// cat file.json | pipegpt -p "Convert this JSON to YAML"
+/// ```
+/// ```bash
+/// cat french.txt | pipegpt -p "Translate this to English please."
+/// ```
+/// ```bash
+/// git diff -- staged | pipegpt -p "Code review this code change"
+/// ```
 #[tokio::main]
 async fn main() {
     // enable logging
