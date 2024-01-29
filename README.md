@@ -64,12 +64,6 @@ cat src/main.rs  | OPENAI_API_KEY='sk-abc123' pipe-gpt -p "how would you improve
 cat src/main.rs  | OPENAI_API_KEY='sk-abc123' pipe-gpt -p "improve the code and only output the replacement code as I will pipe the output directly back into the source file, no explanations, just pure code" > src/main.rs
 ```
 
-## ToDo
- - Add unit tests
- - Add documentation
- - Support roles such as "software developer", "data scientist" etc
- - Release crate
-
 ## Set the open api key env var in windows powershell
 ```powershell
 $env:OPENAI_API_KEY = 'sk-12345abc'
