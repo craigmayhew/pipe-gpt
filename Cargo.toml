@@ -14,7 +14,7 @@ keywords = [
     "openai",
     "terminal",
 ]
-license = "MIT OR Apache-2.0"
+license = "MIT"
 name = "pipe-gpt"
 readme = "README.md"
 repository = "https://github.com/craigmayhew/pipe-gpt"
