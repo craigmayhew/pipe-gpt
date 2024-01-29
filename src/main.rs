@@ -1,7 +1,7 @@
 // atty to determine if data is piped in or not
 use atty::Stream;
 // clap for command line argument parsing
-use clap::{arg, Arg, command, Command, value_parser};
+use clap::{Arg, command, Command, value_parser};
 // logging
 use log::{info, debug};
 // openai api
@@ -103,44 +103,51 @@ async fn send_to_gpt4(input: &str, arguments: (String, i32, f32, f32, bool)) -> 
 /// - `-s [top_p]`: Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus 
 ///   sampling parameter.
 fn args_setup() -> Command {
+    let markdown_arg = Arg::new("markdown")
+        .long("markdown")
+        .value_name("markdown")
+        .help("Render markdown instead of outputting as plain text")
+        .required(false)
+        .value_parser(value_parser!(bool));
+
     let max_tokens_arg = Arg::new("max_tokens")
         .short('m')
         .long("max_tokens")
         .value_name("max_tokens")
-        .help(&format!("Advanced: Adjust token limit up to a maximum of {} for GPT4.", MAX_TOKENS))
+        .help(&format!("Advanced: Adjust token limit up to a maximum of {} for GPT4", MAX_TOKENS))
         .required(false)
         .value_parser(value_parser!(i32));
 
+    let prepend_arg = Arg::new("prepend")
+        .short('p')
+        .long("prepend")
+        .value_name("prepend")
+        .help("Text to prepend to the piped content e.g. \"find the pattern: \"")
+        .required(false);
+
+    let temperature_arg = Arg::new("temperature")
+        .short('t')
+        .long("temperature")
+        .value_name("temperature")
+        .help("Advanced: Adjust temperature of response between 0.0 and 1.0. The higher the value, the more likely the generated text will be diverse, but there is a higher possibility of grammar errors and generation of nonsense")
+        .required(false)
+        .value_parser(value_parser!(f32));
+
+    let top_p_arg = Arg::new("top_p")
+        .short('s')
+        .long("top_p")
+        .value_name("top_p")
+        .help("Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus sampling parameter")
+        .required(false)
+        .value_parser(value_parser!(f32));
+
     command!() // requires `cargo` feature
         .about("Sends piped content to GPT-4. Author: Craig Mayhew")
-        .arg(
-            arg!(
-                -p [prepend] "Text to prepend to the piped content e.g. \"find the pattern: \""
-            )
-            .required(false)
-        )
-        .arg(
-            arg!(
-                -t [temperature] "Advanced: Adjust temperature of response between 0.0 and 1.0. The higher the value, the more likely the generated text will be diverse, but there is a higher possibility of grammar errors and generation of nonsense."
-            )
-            .required(false)
-            .value_parser(value_parser!(f32))
-        )
+        .arg(markdown_arg)
         .arg(max_tokens_arg)
-        .arg(
-            arg!(
-                -s [top_p] "Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus sampling parameter."
-            )
-            .required(false)
-            .value_parser(value_parser!(f32))
-        )
-        .arg(
-            arg!(
-                --markdown "Render markdown instead of outputting as plain text."
-            )
-            .required(false)
-            .value_parser(value_parser!(bool))
-        )
+        .arg(prepend_arg)
+        .arg(temperature_arg)
+        .arg(top_p_arg)
 }
 
 /// # Parse Command Line Arguments
