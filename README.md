@@ -1,5 +1,7 @@
-# Pipe | GPT
+# pipe-gpt
 Pipe your content to gpt directly from the command line. A concept that allows for a lot of possibilities.
+
+Installation via cargo `cargo install pipe-gpt`, build it locally via `cargo build --release`, or download from the releases page.
 
 ## Use cases
 
@@ -11,7 +13,7 @@ Pipe your content to gpt directly from the command line. A concept that allows f
 - `cat french.txt | pipegpt -p "Translate this to English please."` 
 - `git diff --staged | pipegpt -p "Code review this code change"`
 
-### Pipe | GPT for local dev
+### pipe-gpt for local dev
 
 
 ```
@@ -31,7 +33,7 @@ Here are some suggestions to improve your code:
 5. Line 35-38: Instead of using `unwrap()`, it's better to handle the error properly. You can use `match` to handle the possible `None` case.
 ```
 
-### Pipe | GPT for CI
+### pipe-gpt for CI
 
 ```yaml
 jobs:
