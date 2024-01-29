@@ -10,7 +10,7 @@
 //! ```
 //! 
 //!```sh
-//!cat main.rs | pipegpt -p "Is this code production ready? If yes reply "Yes". If no, then explain why not. Be concise."
+//!cat main.rs | pipegpt -p "Is this code production ready? If yes reply 'Yes'. If no, then explain why not. Be concise."
 //!```
 //! 
 //! ```sh
@@ -22,7 +22,7 @@
 //! ```
 //! 
 //! ```sh
-//! git diff -- staged | pipegpt -p "Code review this code change"
+//! git diff --staged | pipegpt -p "Code review this code change"
 //! ```
 
 // atty to determine if data is piped in or not

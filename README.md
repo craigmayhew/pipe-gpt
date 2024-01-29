@@ -6,10 +6,10 @@ Pipe your content to gpt directly from the command line. A concept that allows f
 ### Local command-line usage
 - `tail -30 /var/httpd.log | pipe-gpt --p "Is there anything in the http log file I should fix?"`
 - `cat main.rs | pipegpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."`
-- `cat main.rs | pipegpt -p "Is this code production ready? If yes reply "Yes". If no, then explain why not. Be concise."`
+- `cat main.rs | pipegpt -p "Is this code production ready? If yes reply 'Yes'. If no, then explain why not. Be concise."`
 - `cat file.json | pipegpt -p "Convert this JSON to YAML"`
 - `cat french.txt | pipegpt -p "Translate this to English please."` 
-- `git diff -- staged | pipegpt -p "Code review this code change"`
+- `git diff --staged | pipegpt -p "Code review this code change"`
 
 ### Pipe | GPT for local dev
 
