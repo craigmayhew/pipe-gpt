@@ -56,10 +56,10 @@ Which gives this output in Github Actions CI:
 
 ## Examples of full commands
 ```sh
-cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "how would you improve this code? include line numbers in your comments so I can tell where you mean"
+cat src/main.rs  | OPENAI_API_KEY='sk-abc123' pipe-gpt -p "how would you improve this code? include line numbers in your comments so I can tell where you mean"
 ```
 ```sh
-cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "improve the code and only output the replacement code as I will pipe the output directly back into the source file, no explanations, just pure code" > src/main.rs
+cat src/main.rs  | OPENAI_API_KEY='sk-abc123' pipe-gpt -p "improve the code and only output the replacement code as I will pipe the output directly back into the source file, no explanations, just pure code" > src/main.rs
 ```
 
 ## ToDo
