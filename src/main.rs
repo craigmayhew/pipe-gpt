@@ -1,3 +1,30 @@
+//! Pipe your content to gpt directly from the command line.
+//! A concept that allows for a lot of possibilities in local environments and CI pipelines
+//! 
+//! ```sh
+//! tail -30 /var/httpd.log | pipe-gpt --p "Is there anything in the http log file I should fix?"
+//! ```
+//! 
+//! ```sh
+//! cat main.rs | pipegpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."
+//! ```
+//! 
+//!```sh
+//!cat main.rs | pipegpt -p "Is this code production ready? If yes reply "Yes". If no, then explain why not. Be concise."
+//!```
+//! 
+//! ```sh
+//! cat file.json | pipegpt -p "Convert this JSON to YAML" > file.yaml
+//! ```
+//! 
+//! ```sh
+//! cat french.txt | pipegpt -p "Translate this to English please."
+//! ```
+//! 
+//! ```sh
+//! git diff -- staged | pipegpt -p "Code review this code change"
+//! ```
+
 // atty to determine if data is piped in or not
 use atty::Stream;
 // clap for command line argument parsing
@@ -178,24 +205,7 @@ fn args_read (args_setup: Command) -> (std::string::String, i32, f32, f32, bool)
 /// 
 /// ## Example Usage
 /// 
-/// ```bash
-/// tail -30 /var/httpd.log | pipe-gpt --p "Is there anything in the http log file I should fix?"
-/// ```
-/// ```bash
-/// cat main.rs | pipegpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."
-/// ```
-/// ```bash
-/// cat main.rs | pipegpt -p "Is this code production ready? If yes reply "Yes". If no, then explain why not. Be concise."
-/// ```
-/// ```bash
-/// cat file.json | pipegpt -p "Convert this JSON to YAML"
-/// ```
-/// ```bash
-/// cat french.txt | pipegpt -p "Translate this to English please."
-/// ```
-/// ```bash
-/// git diff -- staged | pipegpt -p "Code review this code change"
-/// ```
+/// Please see [crate] level docs for usage examples
 #[tokio::main]
 async fn main() {
     // enable logging
