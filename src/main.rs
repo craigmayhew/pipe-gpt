@@ -1,7 +1,7 @@
 // atty to determine if data is piped in or not
 use atty::Stream;
 // clap for command line argument parsing
-use clap::{arg, command, Command, value_parser};
+use clap::{arg, Arg, command, Command, value_parser};
 // logging
 use log::{info, debug};
 // openai api
@@ -25,6 +25,10 @@ use termimad::{
 
 /// Defines which gpt model to use. Currently set to "gpt-4"
 const MODEL: &str = "gpt-4";
+/// Defines default maximum number of tokens available in conversation and response
+const MAX_TOKENS: &i32 = &4096;
+/// Defines default temperature of response
+const TEMPERATURE: &f32 = &0.6;
 
 /// # Initialise `ChatBody` Struct
 // TODO: This can probably be part of a lrger refactor so we aren't passing so many tuples back and forther between functions. i.e. we have ChatBody, just use that
@@ -99,6 +103,14 @@ async fn send_to_gpt4(input: &str, arguments: (String, i32, f32, f32, bool)) -> 
 /// - `-s [top_p]`: Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus 
 ///   sampling parameter.
 fn args_setup() -> Command {
+    let max_tokens_arg = Arg::new("max_tokens")
+        .short('m')
+        .long("max_tokens")
+        .value_name("max_tokens")
+        .help(&format!("Advanced: Adjust token limit up to a maximum of {} for GPT4.", MAX_TOKENS))
+        .required(false)
+        .value_parser(value_parser!(i32));
+
     command!() // requires `cargo` feature
         .about("Sends piped content to GPT-4. Author: Craig Mayhew")
         .arg(
@@ -114,13 +126,7 @@ fn args_setup() -> Command {
             .required(false)
             .value_parser(value_parser!(f32))
         )
-        .arg(
-            arg!(
-                -m [max_tokens] "Advanced: Adjust token limit up to a maximum of 4096 for GPT4."
-            )
-            .required(false)
-            .value_parser(value_parser!(i32))
-        )
+        .arg(max_tokens_arg)
         .arg(
             arg!(
                 -s [top_p] "Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus sampling parameter."
@@ -146,8 +152,8 @@ fn args_read (args_setup: Command) -> (std::string::String, i32, f32, f32, bool)
     let empty_string = String::from("");
 
     let prepend = matches.get_one::<String>("prepend").unwrap_or(&empty_string);
-    let max_tokens = matches.get_one::<i32>("max_tokens").unwrap_or(&4096);
-    let temperature = matches.get_one::<f32>("temperature").unwrap_or(&0.6);
+    let max_tokens = matches.get_one::<i32>("max_tokens").unwrap_or(MAX_TOKENS);
+    let temperature = matches.get_one::<f32>("temperature").unwrap_or(TEMPERATURE);
     let top_p = matches.get_one::<f32>("top_p").unwrap_or(&0.95);
     let render_markdown = matches.get_one::<bool>("markdown").unwrap_or(&false);
     
