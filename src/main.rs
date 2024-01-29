@@ -59,7 +59,11 @@ async fn send_to_gpt4(input: &str, arguments: (String, i32, f32, f32, bool)) -> 
     if !&prepend.is_empty() {
         conversation_messages.push(Message { role: Role::User, content: prepend });
     }
-    conversation_messages.push(Message { role: Role::User, content: "the following is piped input from the command line".to_owned() + input });
+    // if data was piped into this application, add it to the conversation
+    // This is useful even if the input is blank, as a form of debug, GPT will likely respond with ~"It looks like you forgot the data"
+    if !atty::is(Stream::Stdin) {
+        conversation_messages.push(Message { role: Role::User, content: input.to_string() });
+    }
     // Load API key from environment OPENAI_API_KEY
     let auth = Auth::from_env().expect("Failed to read auth from environment");
     let openai = OpenAI::new(auth, "https://api.openai.com/v1/");
