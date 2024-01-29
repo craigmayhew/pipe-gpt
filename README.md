@@ -3,6 +3,14 @@ Pipe your content to gpt directly from the command line. A concept that allows f
 
 ## Use cases
 
+### Local command-line usage
+- `tail -30 /var/httpd.log | pipe-gpt --p "Is there anything in the http log file I should fix?"`
+- `cat main.rs | pipegpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."`
+- `cat main.rs | pipegpt -p "Is this code production ready? If yes reply "Yes". If no, then explain why not. Be concise."`
+- `cat file.json | pipegpt -p "Convert this JSON to YAML"`
+- `cat french.txt | pipegpt -p "Translate this to English please."` 
+- `git diff -- staged | pipegpt -p "Code review this code change"`
+
 ### Pipe | GPT for local dev
 
 
@@ -58,12 +66,6 @@ cat src/main.rs  | OPENAI_API_KEY='sk-abc123' ./target/debug/pipe-gpt -p "improv
  - Add unit tests
  - Add documentation
  - Support roles such as "software developer", "data scientist" etc
- - Examples of good prompts:
-    - `cat main.rs | pipegpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."`
-    - `cat main.rs | pipegpt -p "Is this code production ready? If yes reply "Yes". If no, then explain why not. Be concise."`
-    - `cat file.json | pipegpt -p "Convert this JSON to YAML"`
-    - `git diff -- staged | pipegpt -p "Code review this code change"`
-    - `cat french.txt | pipegpt -p "Translate this to English please."` 
  - Release crate
 
 ## Set the open api key env var in windows powershell
