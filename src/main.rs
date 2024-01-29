@@ -6,23 +6,23 @@
 //! ```
 //! 
 //! ```sh
-//! cat main.rs | pipegpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."
+//! cat main.rs | pipe-gpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."
 //! ```
 //! 
 //!```sh
-//!cat main.rs | pipegpt -p "Is this code production ready? If yes reply 'Yes'. If no, then explain why not. Be concise."
+//!cat main.rs | pipe-gpt -p "Is this code production ready? If yes reply 'Yes'. If no, then explain why not. Be concise."
 //!```
 //! 
 //! ```sh
-//! cat file.json | pipegpt -p "Convert this JSON to YAML" > file.yaml
+//! cat file.json | pipe-gpt -p "Convert this JSON to YAML" > file.yaml
 //! ```
 //! 
 //! ```sh
-//! cat french.txt | pipegpt -p "Translate this to English please."
+//! cat french.txt | pipe-gpt -p "Translate this to English please."
 //! ```
 //! 
 //! ```sh
-//! git diff --staged | pipegpt -p "Code review this code change"
+//! git diff --staged | pipe-gpt -p "Code review this code change"
 //! ```
 
 // atty to determine if data is piped in or not

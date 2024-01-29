@@ -7,11 +7,11 @@ Installation via cargo `cargo install pipe-gpt`, build it locally via `cargo bui
 
 ### Local command-line usage
 - `tail -30 /var/httpd.log | pipe-gpt --p "Is there anything in the http log file I should fix?"`
-- `cat main.rs | pipegpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."`
-- `cat main.rs | pipegpt -p "Is this code production ready? If yes reply 'Yes'. If no, then explain why not. Be concise."`
-- `cat file.json | pipegpt -p "Convert this JSON to YAML" > file.yaml`
-- `cat french.txt | pipegpt -p "Translate this to English please."` 
-- `git diff --staged | pipegpt -p "Code review this code change"`
+- `cat main.rs | pipe-gpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."`
+- `cat main.rs | pipe-gpt -p "Is this code production ready? If yes reply 'Yes'. If no, then explain why not. Be concise."`
+- `cat file.json | pipe-gpt -p "Convert this JSON to YAML" > file.yaml`
+- `cat french.txt | pipe-gpt -p "Translate this to English please."` 
+- `git diff --staged | pipe-gpt -p "Code review this code change"`
 
 ### pipe-gpt for local dev
 
