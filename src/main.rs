@@ -28,7 +28,7 @@
 // atty to determine if data is piped in or not
 use atty::Stream;
 // clap for command line argument parsing
-use clap::{Arg, command, Command, value_parser};
+use clap::{Arg, ArgAction, command, Command, value_parser};
 // logging
 use log::{info, debug};
 // openai api
@@ -135,7 +135,7 @@ fn args_setup() -> Command {
         .value_name("markdown")
         .help("Render markdown instead of outputting as plain text")
         .required(false)
-        .value_parser(value_parser!(bool));
+        .action(ArgAction::SetTrue);
 
     let max_tokens_arg = Arg::new("max_tokens")
         .short('m')
