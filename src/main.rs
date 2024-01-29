@@ -23,11 +23,11 @@ use termimad::{
     MadSkin,
 };
 
-/// Configuration
+/// Defines which gpt model to use. Currently set to "gpt-4"
 const MODEL: &str = "gpt-4";
 
-/// initialise a ChatBody struct.
-/// Todo: This can probably be part of a lrger refactor so we aren't passing so many tuples back and forther between functions. i.e. we have ChatBody, just use that
+/// # Initialise `ChatBody` Struct
+// TODO: This can probably be part of a lrger refactor so we aren't passing so many tuples back and forther between functions. i.e. we have ChatBody, just use that
 fn initialise_chat_body (max_tokens: i32, temperature: f32, top_p: f32, conversation_messages: Vec<Message>) -> ChatBody {
     let chatbody = ChatBody {
         model: MODEL.to_owned(),
@@ -49,9 +49,13 @@ fn initialise_chat_body (max_tokens: i32, temperature: f32, top_p: f32, conversa
     chatbody
 }
 
-/// send request to openai api
+/// # Send Request To Openai API
+/// 
+/// Loads the OPENAI_API_KEY environment variable, connects to OpenAI API, sends chat
 async fn send_to_gpt4(input: &str, arguments: (String, i32, f32, f32, bool)) -> Result<String, reqwest::Error> {
+    // debug log
     debug!("entered send_to_gpt4()");
+
     let (prepend, max_tokens, temperature, top_p, _render_markdown) = arguments;
     let mut conversation_messages = vec![
         Message { role: Role::System, content: "You are a helpful assistant.".to_string() },
@@ -71,12 +75,29 @@ async fn send_to_gpt4(input: &str, arguments: (String, i32, f32, f32, bool)) -> 
     let chat_completion = openai.chat_completion_create(&body).expect("chat completion failed");
     let choice = chat_completion.choices;
     let message = &choice[0].message.as_ref().expect("Failed to read message from API");
+    // debug log
     debug!("message recieved {:?}", message);
 
     Ok(message.content.to_string())
 }
 
-/// define command line argument and their descriptions
+/// # Define Command Line Arguments
+/// 
+/// This function defines command line arguments and their descriptions
+/// 
+/// ## Basic Usage
+/// 
+/// - `-p [prepend]`: Text to prepend to the piped content e.g. `-p "find the pattern: "`
+/// - `--markdown`: Render markdown instead of outputting as plain text.
+/// 
+/// ## Advanced Usage
+/// 
+/// - `-t [temperature]`: Advanced: Adjust temperature of response between 0.0 and 1.0. 
+///   The higher the value, the more likely the generated text will be diverse, but there 
+///   is a higher possibility of grammar errors and generation of nonsense.
+/// - `-m [max_tokens]`: Advanced: Adjust token limit up to a maximum of 4096 for GPT4.
+/// - `-s [top_p]`: Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus 
+///   sampling parameter.
 fn args_setup() -> Command {
     command!() // requires `cargo` feature
         .about("Sends piped content to GPT-4. Author: Craig Mayhew")
@@ -116,7 +137,9 @@ fn args_setup() -> Command {
         )
 }
 
-/// parse command line arguments, setting to defaults where ommitted
+/// # Parse Command Line Arguments
+/// 
+/// Arguments are set to defaults where ommitted
 fn args_read (args_setup: Command) -> (std::string::String, i32, f32, f32, bool) {
     let matches = args_setup.get_matches();
     
