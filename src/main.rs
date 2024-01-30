@@ -57,6 +57,9 @@ const MAX_TOKENS: &i32 = &4096;
 /// Defines default temperature of response
 const TEMPERATURE: &f32 = &0.6;
 
+/// # Create Conversation Vector
+/// 
+/// Add the prepend string if present. Add piped stream if present.
 fn create_conversation(prepend: String, input: &str) -> Vec<openai_api_rust::Message> {
     let mut conversation_messages = vec![
         Message { role: Role::System, content: "You are a helpful assistant.".to_string() },
