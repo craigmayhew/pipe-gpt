@@ -1,0 +1,7 @@
+{
+    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.checkOnSave.overrideCommand": [
+        "cargo",
+        "clippy",
+    ],
+}
