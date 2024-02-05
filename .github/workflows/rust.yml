@@ -23,4 +23,4 @@ jobs:
     - name: GPT Code Review
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: pwd && find . -path './target' -prune -o -name '*.rs' -exec echo {} \; -exec cat {} \; | ./target/debug/pipe-gpt -p "how would you improve this code? include line numbers in your comments so I can tell where you mean"
+      run: pwd && find . -path './target' -prune -o -name '*.rs' -exec echo {} \; -exec cat {} \; | ./target/debug/pipe-gpt -p "how would you improve this code? include line numbers in your comments so I can tell where you mean" --markdown
