@@ -57,13 +57,23 @@ const MAX_TOKENS: &i32 = &4096;
 /// Defines default temperature of response
 const TEMPERATURE: &f32 = &0.6;
 
+enum AssistantPurpose {
+    CodeReviewer,
+    Default,
+}
+
 /// # Create Conversation Vector
 /// 
 /// Add the prepend string if present. Add piped stream if present.
-fn create_conversation(prepend: String, input: &str) -> Vec<openai_api_rust::Message> {
-    let mut conversation_messages = vec![
-        Message { role: Role::System, content: "You are a helpful assistant.".to_string() },
-    ];
+fn create_conversation(prepend: String, input: &str, purpose: AssistantPurpose) -> Vec<openai_api_rust::Message> {
+    let mut conversation_messages = match purpose {
+        AssistantPurpose::Default => {
+            vec![Message { role: Role::System, content: "You are a helpful assistant.".to_string() }]
+        },
+        AssistantPurpose::CodeReviewer => {
+            vec![Message { role: Role::System, content: "You are a helpful assistant. How would you improve this code? Include line numbers in your comments so I can tell where you mean. ".to_string() }]
+        }
+    };
     if !&prepend.is_empty() {
         conversation_messages.push(Message { role: Role::User, content: prepend });
     }
@@ -113,6 +123,13 @@ async fn send_to_gpt4(body: ChatBody) -> Result<String, reqwest::Error> {
 /// - `-s [top_p]`: Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus 
 ///   sampling parameter.
 fn setup_arguments() -> Command {
+    let code_review_flag = Arg::new("code-review")
+        .long("code-review")
+        .value_name("code-review")
+        .help("Use a default prompt that will review your piped code")
+        .required(false)
+        .action(ArgAction::SetTrue);
+
     let markdown_flag = Arg::new("markdown")
         .long("markdown")
         .value_name("markdown")
@@ -153,6 +170,7 @@ fn setup_arguments() -> Command {
 
     command!() // requires `cargo` feature
         .about("Sends piped content to GPT-4. Author: Craig Mayhew")
+        .arg(code_review_flag)
         .arg(markdown_flag)
         .arg(max_tokens_arg)
         .arg(prepend_arg)
@@ -174,6 +192,12 @@ fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
     let top_p = *matches.get_one::<f32>("top_p").unwrap_or(&0.95);
     let render_markdown = *matches.get_one::<bool>("markdown").unwrap_or(&false);
 
+    let assistant_purpose = if *matches.get_one::<bool>("code-review").unwrap_or(&false) {
+        AssistantPurpose::CodeReviewer
+    } else {
+        AssistantPurpose::Default
+    };
+
     let chatbody = ChatBody {
         model: MODEL.to_owned(),
         max_tokens: Some(max_tokens),
@@ -186,7 +210,7 @@ fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
         frequency_penalty: None,
         logit_bias: None,
         user: None,
-        messages: create_conversation(prepend, input),
+        messages: create_conversation(prepend, input, assistant_purpose),
     };
     
     info!("ChatBody struct generated");
