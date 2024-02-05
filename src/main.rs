@@ -112,7 +112,7 @@ async fn send_to_gpt4(body: ChatBody) -> Result<String, reqwest::Error> {
 /// - `-m [max_tokens]`: Advanced: Adjust token limit up to a maximum of 4096 for GPT4.
 /// - `-s [top_p]`: Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus 
 ///   sampling parameter.
-fn args_setup() -> Command {
+fn setup_arguments() -> Command {
     let markdown_flag = Arg::new("markdown")
         .long("markdown")
         .value_name("markdown")
@@ -163,7 +163,7 @@ fn args_setup() -> Command {
 /// # Parse Command Line Arguments
 /// 
 /// Arguments are set to defaults where ommitted
-fn args_read(input: &str, args_setup: Command) -> (ChatBody, bool) {
+fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
     let matches = args_setup.get_matches();
     
     let empty_string = String::from("");
@@ -239,7 +239,7 @@ async fn main() {
         io::stdin().read_to_string(&mut input).expect("Failed to read from stdin");
     }
 
-    let (chat_body,render_markdown) = args_read(&input, args_setup());
+    let (chat_body,render_markdown) = parse_arguments(&input, setup_arguments());
 
     markdown_plaintext_or_error(send_to_gpt4(chat_body).await, render_markdown);
 }
