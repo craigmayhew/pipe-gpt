@@ -19,6 +19,8 @@ jobs:
     - name: Build
       run: cargo build --verbose
     - name: Run tests
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: cargo test --verbose
     - name: GPT Code Review
       env:
