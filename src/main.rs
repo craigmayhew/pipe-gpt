@@ -284,3 +284,62 @@ async fn main() {
 
     markdown_plaintext_or_error(send_to_gpt4(chat_body).await, render_markdown);
 }
+
+#[cfg(any(test, doc))]
+mod tests {
+    use super::*;
+
+    /// Test that piped input is not detected
+    #[cfg_attr(not(doc), test)]
+    fn test_create_conversation_no_pipe() {
+        let p_text = "This is the prepend";
+
+        let prepend = p_text.to_string();
+        let input = "This is the piped input. It won't be piped as part of the test".to_string();
+        let purpose = AssistantPurpose::Default;
+
+        let conversation = create_conversation(prepend, &input, purpose);   
+        assert_eq!(conversation.len(), 2); // then len is only two instead of three because piping isn't active here
+        assert_eq!(conversation[1].content, p_text);
+    }
+
+    /// Test that the chat_body has some sensible values after being initialised
+    #[cfg_attr(not(doc), test)]
+    fn test_parse_arguments() {
+        let command = setup_arguments();
+        let input = "Test".to_string();
+        let (chat_body, render_markdown) = parse_arguments(&input, command);
+
+        assert_eq!(chat_body.model, "gpt-4");
+        assert_eq!(chat_body.max_tokens.unwrap(), *MAX_TOKENS);
+        assert_eq!(chat_body.temperature.unwrap(), *TEMPERATURE);
+        assert_eq!(render_markdown, false);
+    }
+
+    /// Test an API call using an API key
+    #[cfg_attr(not(doc), tokio::test)]
+    async fn test_send_to_gpt4() {
+        // Note: This test requires a valid API key set in the environment  
+        let body = ChatBody {
+            model: MODEL.to_owned(),
+            max_tokens: Some(*MAX_TOKENS),
+            temperature: Some(*TEMPERATURE),
+            top_p: Some(0.95),
+            n: Some(1),
+            stream: Some(false),
+            stop: None,
+            presence_penalty: None,
+            frequency_penalty: None,
+            logit_bias: None,
+            user: None,
+            messages: vec![Message {
+                role: Role::User,
+                content: "Translate this to English please.".to_string(),   
+            }],
+        };
+
+        let result = send_to_gpt4(body).await;
+
+        assert!(result.is_ok());
+    }
+}
