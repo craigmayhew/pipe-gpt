@@ -39,8 +39,6 @@ use openai_api_rust::{
     OpenAI,
     Role,
 };
-// reqwest for http calls
-use reqwest;
 // std io
 use std::io::{self, Read};
 // termimad for markdown rendering in the command line
@@ -141,7 +139,7 @@ fn setup_arguments() -> Command {
         .short('m')
         .long("max_tokens")
         .value_name("max_tokens")
-        .help(&format!("Advanced: Adjust token limit up to a maximum of {} for GPT4", MAX_TOKENS))
+        .help(format!("Advanced: Adjust token limit up to a maximum of {} for GPT4", MAX_TOKENS))
         .required(false)
         .value_parser(value_parser!(i32));
 
