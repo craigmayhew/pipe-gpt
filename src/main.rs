@@ -113,7 +113,7 @@ async fn send_to_gpt4(body: ChatBody) -> Result<String, reqwest::Error> {
 /// - `-s [top_p]`: Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus 
 ///   sampling parameter.
 fn args_setup() -> Command {
-    let markdown_arg = Arg::new("markdown")
+    let markdown_flag = Arg::new("markdown")
         .long("markdown")
         .value_name("markdown")
         .help("Render markdown instead of outputting as plain text")
@@ -153,7 +153,7 @@ fn args_setup() -> Command {
 
     command!() // requires `cargo` feature
         .about("Sends piped content to GPT-4. Author: Craig Mayhew")
-        .arg(markdown_arg)
+        .arg(markdown_flag)
         .arg(max_tokens_arg)
         .arg(prepend_arg)
         .arg(temperature_arg)
