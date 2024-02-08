@@ -14,6 +14,7 @@ Please note you will need an [OpenAI API Key](https://platform.openai.com/accoun
 - `cat file.json | pipe-gpt -p "Convert this JSON to YAML" > file.yaml`
 - `cat french.txt | pipe-gpt -p "Translate this to English please."` 
 - `git diff --staged | pipe-gpt -p "Code review this code change"`
+ - `cat src/main.rs | pipe-gpt -p "improve the code and only output the replacement code as I will pipe the output directly back into a file, no explanations, just pure code please" > src/main.new.rs`
 
 ### pipe-gpt for local dev
 
@@ -58,13 +59,6 @@ jobs:
 Which gives this output in Github Actions CI:
 ![Pipe GPT used in CI to give code review recomendations](./imgs/github-workflow-gpt-code-review-markdown.png)
 
-## Examples of full commands
-```sh
-cat src/main.rs  | OPENAI_API_KEY='sk-abc123' pipe-gpt -p "how would you improve this code? include line numbers in your comments so I can tell where you mean"
-```
-```sh
-cat src/main.rs  | OPENAI_API_KEY='sk-abc123' pipe-gpt -p "improve the code and only output the replacement code as I will pipe the output directly back into the source file, no explanations, just pure code" > src/main.rs
-```
 ## Roadmap
  - [ ] secrets and config files
  - [ ] loading custom prompts as short arguments
