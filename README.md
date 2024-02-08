@@ -75,6 +75,10 @@ $env:OPENAI_API_KEY = 'sk-12345abc'
 ```sh
 export OPENAI_API_KEY=sk-12345abc
 ```
+## Roadmap
+ - [ ] secrets and config files
+ - [ ] loading custom prompts as short arguments
+ - [ ] namespaced roles/prompts
 
 ## Useful links
  - https://platform.openai.com/account/usage
