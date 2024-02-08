@@ -66,11 +66,6 @@ cat src/main.rs  | OPENAI_API_KEY='sk-abc123' pipe-gpt -p "how would you improve
 cat src/main.rs  | OPENAI_API_KEY='sk-abc123' pipe-gpt -p "improve the code and only output the replacement code as I will pipe the output directly back into the source file, no explanations, just pure code" > src/main.rs
 ```
 
-## Set the open api key env var in windows powershell
-```powershell
-$env:OPENAI_API_KEY = 'sk-12345abc'
-```
-
 ## Set the open api key env var in linux
 ```sh
 export OPENAI_API_KEY=sk-12345abc
@@ -79,6 +74,11 @@ export OPENAI_API_KEY=sk-12345abc
  - [ ] secrets and config files
  - [ ] loading custom prompts as short arguments
  - [ ] namespaced roles/prompts
+
+## Set the open api key env var in windows powershell
+```powershell
+$env:OPENAI_API_KEY = 'sk-12345abc'
+```
 
 ## Useful links
  - https://platform.openai.com/account/usage
