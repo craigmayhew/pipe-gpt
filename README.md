@@ -3,6 +3,8 @@ Pipe your content to gpt directly from the command line. A concept that allows f
 
 Installation via cargo `cargo install pipe-gpt`, build it locally via `cargo build --release`, or download from the releases page.
 
+Please note you will need an [OpenAI API Key](https://platform.openai.com/account/api-keys).
+
 ## Use cases
 
 ### Local command-line usage
