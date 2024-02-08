@@ -125,9 +125,8 @@ async fn send_to_gpt4(body: ChatBody) -> Result<String, reqwest::Error> {
 ///
 /// ## Advanced Usage
 ///
-/// - `-t [temperature]`: Advanced: Adjust temperature of response between 0.0 and 1.0.
-///   The higher the value, the more likely the generated text will be diverse, but there
-///   is a higher possibility of grammar errors and generation of nonsense.
+/// - `-t [temperature]`: Set response temperature between 0.0 and 1.0. Higher values are more 
+///   likely to generate diverse text, but with a risk of grammar errors and generation of nonsense
 /// - `-m [max_tokens]`: Advanced: Adjust token limit up to a maximum of 4096 for GPT4.
 /// - `-s [top_p]`: Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus
 ///   sampling parameter.
@@ -168,7 +167,7 @@ fn setup_arguments() -> Command {
         .short('t')
         .long("temperature")
         .value_name("temperature")
-        .help("Advanced: Adjust temperature of response between 0.0 and 1.0. The higher the value, the more likely the generated text will be diverse, but there is a higher possibility of grammar errors and generation of nonsense")
+        .help("Set response temperature between 0.0 and 1.0. Higher values are more likely to generate diverse text, but with a risk of grammar errors and generation of nonsense")
         .required(false)
         .value_parser(value_parser!(f32));
 
