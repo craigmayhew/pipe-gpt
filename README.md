@@ -63,6 +63,7 @@ Which gives this output in Github Actions CI:
  - [ ] secrets and config files
  - [ ] loading custom prompts as short arguments
  - [ ] namespaced roles/prompts
+ - [ ] reduce dependencies
 
 ## Set the open api key env var in linux
 ```sh
