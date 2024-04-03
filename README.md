@@ -60,6 +60,7 @@ Which gives this output in Github Actions CI:
 ![Pipe GPT used in CI to give code review recomendations](./imgs/github-workflow-gpt-code-review-markdown.png)
 
 ## Roadmap
+ - [ ] graceful API throttling
  - [ ] secrets and config files
  - [ ] loading custom prompts as short arguments
  - [ ] namespaced roles/prompts
