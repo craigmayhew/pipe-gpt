@@ -89,8 +89,7 @@ pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
 
     let prepend = matches
         .get_one::<String>("prepend")
-        .unwrap_or(&empty_string)
-        .to_owned();
+        .unwrap_or(&empty_string);
     let max_tokens = *matches.get_one::<i32>("max_tokens").unwrap_or(MAX_TOKENS);
     let temperature = *matches.get_one::<f32>("temperature").unwrap_or(TEMPERATURE);
     let top_p = *matches.get_one::<f32>("top_p").unwrap_or(&0.95);
@@ -101,6 +100,8 @@ pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
     } else {
         AssistantPurpose::Default
     };
+
+    let conversation = create_conversation(prepend, input, &assistant_purpose);
 
     let chatbody = ChatBody {
         model: MODEL.to_owned(),
@@ -114,7 +115,7 @@ pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
         frequency_penalty: None,
         logit_bias: None,
         user: None,
-        messages: create_conversation(prepend, input, assistant_purpose),
+        messages: conversation,
     };
 
     info!("ChatBody struct generated");

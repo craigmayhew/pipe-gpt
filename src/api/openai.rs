@@ -31,9 +31,9 @@ impl ToString for AssistantPurpose {
 ///
 /// Add the prepend string if present. Add piped stream if present.
 pub fn create_conversation(
-    prepend: String,
+    prepend: &str,
     input: &str,
-    purpose: AssistantPurpose,
+    purpose: &AssistantPurpose,
 ) -> Vec<openai_api_rust::Message> {
     let mut conversation_messages = vec![Message {
         role: Role::System,
@@ -42,7 +42,7 @@ pub fn create_conversation(
     if !&prepend.is_empty() {
         conversation_messages.push(Message {
             role: Role::User,
-            content: prepend,
+            content: prepend.to_string(),
         });
     }
     // if data was piped into this application, add it to the conversation
@@ -90,11 +90,11 @@ mod tests {
     fn test_create_conversation_no_pipe() {
         let p_text = "This is the prepend";
 
-        let prepend = p_text.to_string();
+        let prepend = p_text;
         let input = "This is the piped input. It won't be piped as part of the test".to_string();
         let purpose = AssistantPurpose::Default;
 
-        let conversation = create_conversation(prepend, &input, purpose);
+        let conversation = create_conversation(prepend, &input, &purpose);
         //TODO: Investigate why this is 3 != 2 in github actions but 2 == 2 when run locally
         //assert_eq!(conversation.len(), 2); // then len is only two instead of three because piping isn't active here
         assert_eq!(conversation[1].content, p_text);
