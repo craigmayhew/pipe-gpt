@@ -1,9 +1,10 @@
-use crate::api::openai::create_conversation;
 use crate::api::openai::AssistantPurpose;
+use crate::api::openai::{count_tokens, create_conversation};
 use crate::config::models::{MAX_TOKENS, MODEL, TEMPERATURE};
 use clap::{command, value_parser, Arg, ArgAction, Command}; // clap for command line argument parsing
 use log::*; // logging
 use openai_api_rust::chat::ChatBody;
+use std::process; // needed to exit early
 /// # Define Command Line Arguments
 ///
 /// This function defines command line arguments and their descriptions
@@ -102,6 +103,20 @@ pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
     };
 
     let conversation = create_conversation(prepend, input, &assistant_purpose);
+
+    let token_count = count_tokens(&format!(
+        "{}{}{}",
+        prepend,
+        input,
+        &assistant_purpose.to_string()
+    ));
+
+    if token_count as i32 > max_tokens {
+        println!("Maximum tokens set to: {}", max_tokens);
+        println!("Estimated tokens in request: {}", token_count);
+        println!("Exiting early. This error will be handled more gracefully in future, but for the moment you were just saved an API call");
+        process::exit(1);
+    }
 
     let chatbody = ChatBody {
         model: MODEL.to_owned(),

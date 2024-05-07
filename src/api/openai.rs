@@ -8,6 +8,7 @@ use openai_api_rust::{
     OpenAI,
     Role,
 };
+use regex::Regex;
 
 pub enum AssistantPurpose {
     CodeReviewer,
@@ -25,6 +26,31 @@ impl ToString for AssistantPurpose {
             }
         }
     }
+}
+
+/// Counts the approximate number of tokens in a given text string based on a simple regex pattern.
+/// This function estimates the number of tokens using two regex patterns:
+/// - `\w+` to match sequences of word characters
+/// - `[^\w\s]` to match individual non-word, non-space characters
+///
+/// # Arguments
+///
+/// * `text` - A reference to a string slice that holds the text to be tokenized.
+///
+/// # Returns
+///
+/// Returns the count of estimated tokens in the input text.
+///
+/// # Examples
+///
+/// ```
+/// let sample_text = "Hello, world! This is a test to count tokens.";
+/// let token_count = count_tokens(sample_text);
+/// assert_eq!(token_count, 11);
+/// ```
+pub fn count_tokens(text: &str) -> usize {
+    let re = Regex::new(r"\w+|[^\w\s]").unwrap();
+    re.find_iter(text).count()
 }
 
 /// # Create Conversation Vector
