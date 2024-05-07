@@ -14,6 +14,19 @@ pub enum AssistantPurpose {
     Default,
 }
 
+impl ToString for AssistantPurpose {
+    fn to_string(&self) -> String {
+        match self {
+            AssistantPurpose::Default => {
+                "You are a helpful assistant.".to_string()
+            }
+            AssistantPurpose::CodeReviewer => {
+                "You are a helpful assistant. How would you improve this code? Include line numbers in your comments so I can tell where you mean. ".to_string()
+            }
+        }
+    }
+}
+
 /// # Create Conversation Vector
 ///
 /// Add the prepend string if present. Add piped stream if present.
@@ -22,17 +35,10 @@ pub fn create_conversation(
     input: &str,
     purpose: AssistantPurpose,
 ) -> Vec<openai_api_rust::Message> {
-    let mut conversation_messages = match purpose {
-        AssistantPurpose::Default => {
-            vec![Message {
-                role: Role::System,
-                content: "You are a helpful assistant.".to_string(),
-            }]
-        }
-        AssistantPurpose::CodeReviewer => {
-            vec![Message { role: Role::System, content: "You are a helpful assistant. How would you improve this code? Include line numbers in your comments so I can tell where you mean. ".to_string() }]
-        }
-    };
+    let mut conversation_messages = vec![Message {
+        role: Role::System,
+        content: purpose.to_string(),
+    }];
     if !&prepend.is_empty() {
         conversation_messages.push(Message {
             role: Role::User,
