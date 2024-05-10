@@ -36,6 +36,14 @@ Here are some suggestions to improve your code:
 5. Line 35-38: Instead of using `unwrap()`, it's better to handle the error properly. You can use `match` to handle the possible `None` case.
 ```
 
+### pipe-gpt for en mass single-file code reviews
+```
+find . -name '*.rs' | while read -r file; do cat "$file" | pipe-gpt --markdown -p "Can this code be improved for efficiency?"; done
+```
+```
+find . -name '*.rs' | while read -r file; do cat "$file" | pipe-gpt --markdown -p "Can this code be improved for readability?"; done
+```
+
 ### pipe-gpt for CI
 
 ```yaml
