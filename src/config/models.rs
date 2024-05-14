@@ -1,4 +1,3 @@
-
 /// Defines which gpt model to use. Currently set to "gpt-4"
 pub const MODEL: &str = "gpt-4";
 /// Defines default maximum number of tokens available in conversation and response

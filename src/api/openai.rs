@@ -8,35 +8,69 @@ use openai_api_rust::{
     OpenAI,
     Role,
 };
+use regex::Regex;
+
+use crate::config::models::MAX_TOKENS;
 
 pub enum AssistantPurpose {
     CodeReviewer,
     Default,
 }
 
+impl ToString for AssistantPurpose {
+    fn to_string(&self) -> String {
+        match self {
+            AssistantPurpose::Default => {
+                "You are a helpful assistant.".to_string()
+            }
+            AssistantPurpose::CodeReviewer => {
+                "You are a helpful assistant. How would you improve this code? Include line numbers in your comments so I can tell where you mean. ".to_string()
+            }
+        }
+    }
+}
+
+/// Counts the approximate number of tokens in a given text string based on a simple regex pattern.
+/// This function estimates the number of tokens using two regex patterns:
+/// - `\w+` to match sequences of word characters
+/// - `[^\w\s]` to match individual non-word, non-space characters
+///
+/// # Arguments
+///
+/// * `text` - A reference to a string slice that holds the text to be tokenized.
+///
+/// # Returns
+///
+/// Returns the count of estimated tokens in the input text.
+///
+/// # Examples
+///
+/// ```
+/// let sample_text = "Hello, world! This is a test to count tokens.";
+/// let token_count = count_tokens(sample_text);
+/// assert_eq!(token_count, 11);
+/// ```
+pub fn count_tokens(text: &str) -> usize {
+    let re = Regex::new(r"\w+|[^\w\s]").unwrap();
+    re.find_iter(text).count()
+}
+
 /// # Create Conversation Vector
 ///
 /// Add the prepend string if present. Add piped stream if present.
 pub fn create_conversation(
-    prepend: String,
+    prepend: &str,
     input: &str,
-    purpose: AssistantPurpose,
+    purpose: &AssistantPurpose,
 ) -> Vec<openai_api_rust::Message> {
-    let mut conversation_messages = match purpose {
-        AssistantPurpose::Default => {
-            vec![Message {
-                role: Role::System,
-                content: "You are a helpful assistant.".to_string(),
-            }]
-        }
-        AssistantPurpose::CodeReviewer => {
-            vec![Message { role: Role::System, content: "You are a helpful assistant. How would you improve this code? Include line numbers in your comments so I can tell where you mean. ".to_string() }]
-        }
-    };
+    let mut conversation_messages = vec![Message {
+        role: Role::System,
+        content: purpose.to_string(),
+    }];
     if !&prepend.is_empty() {
         conversation_messages.push(Message {
             role: Role::User,
-            content: prepend,
+            content: prepend.to_string(),
         });
     }
     // if data was piped into this application, add it to the conversation
@@ -84,11 +118,11 @@ mod tests {
     fn test_create_conversation_no_pipe() {
         let p_text = "This is the prepend";
 
-        let prepend = p_text.to_string();
+        let prepend = p_text;
         let input = "This is the piped input. It won't be piped as part of the test".to_string();
         let purpose = AssistantPurpose::Default;
 
-        let conversation = create_conversation(prepend, &input, purpose);
+        let conversation = create_conversation(prepend, &input, &purpose);
         //TODO: Investigate why this is 3 != 2 in github actions but 2 == 2 when run locally
         //assert_eq!(conversation.len(), 2); // then len is only two instead of three because piping isn't active here
         assert_eq!(conversation[1].content, p_text);

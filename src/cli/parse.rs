@@ -1,9 +1,10 @@
-use crate::api::openai::create_conversation;
 use crate::api::openai::AssistantPurpose;
+use crate::api::openai::{count_tokens, create_conversation};
 use crate::config::models::{MAX_TOKENS, MODEL, TEMPERATURE};
 use clap::{command, value_parser, Arg, ArgAction, Command}; // clap for command line argument parsing
 use log::*; // logging
 use openai_api_rust::chat::ChatBody;
+use std::process; // needed to exit early
 /// # Define Command Line Arguments
 ///
 /// This function defines command line arguments and their descriptions
@@ -89,8 +90,7 @@ pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
 
     let prepend = matches
         .get_one::<String>("prepend")
-        .unwrap_or(&empty_string)
-        .to_owned();
+        .unwrap_or(&empty_string);
     let max_tokens = *matches.get_one::<i32>("max_tokens").unwrap_or(MAX_TOKENS);
     let temperature = *matches.get_one::<f32>("temperature").unwrap_or(TEMPERATURE);
     let top_p = *matches.get_one::<f32>("top_p").unwrap_or(&0.95);
@@ -101,6 +101,22 @@ pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
     } else {
         AssistantPurpose::Default
     };
+
+    let conversation = create_conversation(prepend, input, &assistant_purpose);
+
+    let token_count = count_tokens(&format!(
+        "{}{}{}",
+        prepend,
+        input,
+        &assistant_purpose.to_string()
+    ));
+
+    if token_count as i32 > max_tokens {
+        eprintln!("Maximum tokens set to: {}", max_tokens);
+        eprintln!("Estimated tokens in request: {}", token_count);
+        eprintln!("Exiting early due to exceeding max input tokens. Reduce input length or increase max tokens.");
+        process::exit(1);
+    }
 
     let chatbody = ChatBody {
         model: MODEL.to_owned(),
@@ -114,7 +130,7 @@ pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
         frequency_penalty: None,
         logit_bias: None,
         user: None,
-        messages: create_conversation(prepend, input, assistant_purpose),
+        messages: conversation,
     };
 
     info!("ChatBody struct generated");

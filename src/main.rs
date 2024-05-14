@@ -72,3 +72,39 @@ async fn main() {
     markdown_plaintext_or_error(send_to_gpt4(chat_body).await, render_markdown);
     debug!("end of program");
 }
+
+#[cfg(any(test, doc))]
+mod tests {
+    #[test]
+    fn test_app_exits_with_0_when_all_is_well() {
+        use std::process::Command;
+        let output =  Command::new("sh")
+            .arg("-c")
+            .arg("echo \"hello!\" | target/debug/pipe-gpt --markdown -p \"What is the issue with the code?\" -m 50")
+            .output()
+            .expect("Failed to execute command");
+
+        assert!(output.status.success());
+        assert_eq!(
+            output.status.code(),
+            Some(0),
+            "Expected exit code 0 for happy path"
+        );
+    }
+    #[test]
+    fn test_app_exits_with_1_when_too_many_tokens() {
+        use std::process::Command;
+        let output =  Command::new("sh")
+            .arg("-c")
+            .arg("cat src/main.rs | target/debug/pipe-gpt --markdown -p \"What is the issue with the code?\" -m 50")
+            .output()
+            .expect("Failed to execute command");
+
+        assert!(!output.status.success());
+        assert_eq!(
+            output.status.code(),
+            Some(1),
+            "Expected exit code 1 for too many tokens"
+        );
+    }
+}
