@@ -112,9 +112,9 @@ pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
     ));
 
     if token_count as i32 > max_tokens {
-        println!("Maximum tokens set to: {}", max_tokens);
-        println!("Estimated tokens in request: {}", token_count);
-        println!("Exiting early due to exceeding max input tokens. Reduce input length or increase max tokens.");
+        eprintln!("Maximum tokens set to: {}", max_tokens);
+        eprintln!("Estimated tokens in request: {}", token_count);
+        eprintln!("Exiting early due to exceeding max input tokens. Reduce input length or increase max tokens.");
         process::exit(1);
     }
 
