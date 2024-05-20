@@ -10,8 +10,6 @@ use openai_api_rust::{
 };
 use regex::Regex;
 
-use crate::config::models::MAX_TOKENS;
-
 pub enum AssistantPurpose {
     CodeReviewer,
     Default,

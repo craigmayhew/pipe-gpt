@@ -150,7 +150,7 @@ mod tests {
         let input = "Test".to_string();
         let (chat_body, render_markdown) = parse_arguments(&input, command);
 
-        assert_eq!(chat_body.model, "gpt-4");
+        assert_eq!(chat_body.model, "gpt-4o");
         assert_eq!(chat_body.max_tokens.unwrap(), *MAX_TOKENS);
         assert_eq!(chat_body.temperature.unwrap(), *TEMPERATURE);
         assert_eq!(render_markdown, false);
