@@ -1,0 +1,9 @@
+hard_tabs = false
+tab_spaces = 4
+
+reorder_imports = true
+reorder_modules = true
+
+match_block_trailing_comma = true
+
+newline_style = "Unix"
