@@ -18,7 +18,7 @@ pub fn markdown_plaintext_or_error(
             } else {
                 println!("{}", &markdown)
             }
-        }
+        },
         Err(e) => eprintln!("Error: {}", e),
     }
 }
