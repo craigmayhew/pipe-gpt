@@ -11,18 +11,33 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Build
       run: cargo build --verbose
+  
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
     - name: Run tests
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: cargo test --verbose
+
+  review:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
     - name: GPT Code Review
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: pwd && find . -path './target' -prune -o -name '*.rs' -exec echo {} \; -exec cat {} \; | ./target/debug/pipe-gpt --code-review --markdown
+
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Check formatting
+      run: cargo fmt -- --check
