@@ -84,6 +84,9 @@ mod tests {
             .output()
             .expect("Failed to execute command");
 
+        println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
+        println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
+
         assert!(output.status.success());
         assert_eq!(
             output.status.code(),
@@ -99,6 +102,9 @@ mod tests {
             .arg("cat src/main.rs | target/debug/pipe-gpt --markdown -p \"What is the issue with the code?\" -m 50")
             .output()
             .expect("Failed to execute command");
+
+        println!("stdout: {}", String::from_utf8_lossy(&output.stdout));
+        println!("stderr: {}", String::from_utf8_lossy(&output.stderr));
 
         assert!(!output.status.success());
         assert_eq!(
