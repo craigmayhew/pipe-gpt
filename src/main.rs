@@ -78,7 +78,7 @@ mod tests {
     #[test]
     fn test_app_exits_with_0_when_all_is_well() {
         use std::process::Command;
-        let output =  Command::new("sh")
+        let output = Command::new("sh")
             .arg("-c")
             .arg("echo \"hello!\" | target/debug/pipe-gpt --markdown -p \"What is the issue with the code?\" -m 50")
             .output()
@@ -94,7 +94,7 @@ mod tests {
     #[test]
     fn test_app_exits_with_1_when_too_many_tokens() {
         use std::process::Command;
-        let output =  Command::new("sh")
+        let output = Command::new("sh")
             .arg("-c")
             .arg("cat src/main.rs | target/debug/pipe-gpt --markdown -p \"What is the issue with the code?\" -m 50")
             .output()
