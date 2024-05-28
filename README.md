@@ -69,6 +69,8 @@ Which gives this output in Github Actions CI:
  - [ ] namespaced roles/prompts
  - [ ] reduce dependencies
 
+## Contributing
+If you wish to contribute to the codebase, please see [CONTRIBUTE.md](./CONTRIBUTE.md)
 
 ## Useful links
  - https://platform.openai.com/account/usage
