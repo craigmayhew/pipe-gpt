@@ -23,10 +23,9 @@ version = "0.3.1"
 [dependencies]
 atty = "0.2" # For determining if data is piped to the executable or not
 clap = { version = "4.4", features = ["cargo"] } # For command-line argument parsing
-# logging crates
-env_logger = "0.9"
-log = "0.4"
 openai_api_rust = "0.1.8" # For OpenAI API
+env_logger = "0.9" # logging macros
+log = "0.4" # logging macros
 regex = "1.10.4"
 reqwest = "0.11" # For making HTTP requests
 termimad = "0.28" # For rendering text as markdown in terminal
