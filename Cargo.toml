@@ -23,9 +23,9 @@ version = "0.3.1"
 [dependencies]
 atty = "0.2" # For determining if data is piped to the executable or not
 clap = { version = "4.4", features = ["cargo"] } # For command-line argument parsing
-openai_api_rust = "0.1.8" # For OpenAI API
 env_logger = "0.9" # logging macros
 log = "0.4" # logging macros
+openai_api_rust = { git="https://github.com/openai-rs/openai-api.git", rev="6a6b7ff825fd440d23aaca2ce6ed502f0d474805" } # Commit is ahead of crate v 0.1.8. For OpenAI API
 regex = "1.10.4"
 reqwest = "0.11" # For making HTTP requests
 termimad = "0.28" # For rendering text as markdown in terminal
