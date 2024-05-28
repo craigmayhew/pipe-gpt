@@ -5,6 +5,10 @@ Installation via cargo `cargo install pipe-gpt`, build it locally via `cargo bui
 
 Please note you will need an [OpenAI API Key](https://platform.openai.com/account/api-keys).
 
+### Set the open api key env var
+ - in linux: `export OPENAI_API_KEY=sk-12345abc`
+ - in windows powershell `$env:OPENAI_API_KEY = 'sk-12345abc'`
+
 ## Use cases
 
 ### Local command-line usage
@@ -17,7 +21,6 @@ Please note you will need an [OpenAI API Key](https://platform.openai.com/accoun
  - `cat src/main.rs | pipe-gpt -p "improve the code and only output the replacement code as I will pipe the output directly back into a file, no explanations, just pure code please" > src/main.new.rs`
 
 ### pipe-gpt for local dev
-
 
 ```
 user@computer:/GitHub/pipe-gpt$ cat src/main.rs | pipe-gpt -p "how would you improve this code? include line numbers in your comments so I can tell where you mean"
@@ -66,15 +69,6 @@ Which gives this output in Github Actions CI:
  - [ ] namespaced roles/prompts
  - [ ] reduce dependencies
 
-## Set the open api key env var in linux
-```sh
-export OPENAI_API_KEY=sk-12345abc
-```
-
-## Set the open api key env var in windows powershell
-```powershell
-$env:OPENAI_API_KEY = 'sk-12345abc'
-```
 
 ## Useful links
  - https://platform.openai.com/account/usage
