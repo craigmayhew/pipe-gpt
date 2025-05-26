@@ -118,8 +118,10 @@ pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
         process::exit(1);
     }
 
+    let model = std::env::var("AI_MODEL").unwrap_or(MODEL.to_owned());
+
     let chatbody = ChatBody {
-        model: MODEL.to_owned(),
+        model,
         max_tokens: Some(max_tokens),
         temperature: Some(temperature),
         top_p: Some(top_p),

@@ -91,8 +91,12 @@ pub async fn send_to_gpt4(body: ChatBody) -> Result<String, reqwest::Error> {
     debug!("entered send_to_gpt4()");
 
     // Load API key from environment OPENAI_API_KEY
-    let auth = Auth::from_env().expect("Failed to read auth from environment");
-    let openai = OpenAI::new(auth, "https://api.openai.com/v1/");
+    let api_key = std::env::var("AI_API_KEY")
+        .map_err(|_| "Missing AI_API_KEY".to_string())
+        .expect("Failed to read auth from environment");
+    let api_url = std::env::var("AI_API_URL").unwrap_or("https://api.openai.com/v1/".to_string());
+    let auth = Auth::new(&api_key);
+    let openai = OpenAI::new(auth, &api_url);
     let chat_completion = openai
         .chat_completion_create(&body)
         .expect("chat completion failed");
