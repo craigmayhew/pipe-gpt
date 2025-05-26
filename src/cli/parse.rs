@@ -1,6 +1,6 @@
 use crate::api::openai::AssistantPurpose;
 use crate::api::openai::{count_tokens, create_conversation};
-use crate::config::models::{MAX_TOKENS, MODEL, TEMPERATURE};
+use crate::config::models::load_config;
 use clap::{command, value_parser, Arg, ArgAction, Command}; // clap for command line argument parsing
 use log::*; // logging
 use openai_api_rust::chat::ChatBody;
@@ -22,6 +22,8 @@ use std::process; // needed to exit early
 /// - `-s [top_p]`: Advanced: Adjust top_p of response between 0.0 and 1.0. It's the nucleus
 ///   sampling parameter.
 pub fn setup_arguments() -> Command {
+    let config = load_config();
+
     let code_review_flag = Arg::new("code-review")
         .long("code-review")
         .value_name("code-review")
@@ -42,7 +44,7 @@ pub fn setup_arguments() -> Command {
         .value_name("max_tokens")
         .help(format!(
             "Advanced: Adjust token limit up to a maximum of {} for GPT4",
-            MAX_TOKENS
+            config.max_tokens
         ))
         .required(false)
         .value_parser(value_parser!(i32));
@@ -84,6 +86,8 @@ pub fn setup_arguments() -> Command {
 ///
 /// Arguments are set to defaults where ommitted
 pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
+    let config = load_config();
+
     let matches = args_setup.get_matches();
 
     let empty_string = String::from("");
@@ -91,8 +95,12 @@ pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
     let prepend = matches
         .get_one::<String>("prepend")
         .unwrap_or(&empty_string);
-    let max_tokens = *matches.get_one::<i32>("max_tokens").unwrap_or(MAX_TOKENS);
-    let temperature = *matches.get_one::<f32>("temperature").unwrap_or(TEMPERATURE);
+    let max_tokens = *matches
+        .get_one::<i32>("max_tokens")
+        .unwrap_or(&config.max_tokens);
+    let temperature = *matches
+        .get_one::<f32>("temperature")
+        .unwrap_or(&config.temperature);
     let top_p = *matches.get_one::<f32>("top_p").unwrap_or(&0.95);
     let render_markdown = *matches.get_one::<bool>("markdown").unwrap_or(&false);
 
@@ -118,10 +126,8 @@ pub fn parse_arguments(input: &str, args_setup: Command) -> (ChatBody, bool) {
         process::exit(1);
     }
 
-    let model = std::env::var("AI_MODEL").unwrap_or(MODEL.to_owned());
-
     let chatbody = ChatBody {
-        model,
+        model: config.model,
         max_tokens: Some(max_tokens),
         temperature: Some(temperature),
         top_p: Some(top_p),
@@ -148,13 +154,14 @@ mod tests {
     /// Test that the chat_body has some sensible values after being initialised
     #[cfg_attr(not(doc), test)]
     fn test_parse_arguments() {
+        let config = load_config();
         let command = setup_arguments();
         let input = "Test".to_string();
         let (chat_body, render_markdown) = parse_arguments(&input, command);
 
         assert_eq!(chat_body.model, "gpt-4o");
-        assert_eq!(chat_body.max_tokens.unwrap(), *MAX_TOKENS);
-        assert_eq!(chat_body.temperature.unwrap(), *TEMPERATURE);
+        assert_eq!(chat_body.max_tokens.unwrap(), config.max_tokens);
+        assert_eq!(chat_body.temperature.unwrap(), config.temperature);
         assert_eq!(render_markdown, false);
     }
 }

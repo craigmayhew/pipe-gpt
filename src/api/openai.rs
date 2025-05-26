@@ -133,11 +133,12 @@ mod tests {
     /// Test an API call using an API key
     #[cfg_attr(not(doc), tokio::test)]
     async fn test_send_to_gpt4() {
+        let config = load_config();
         // Note: This test requires a valid API key set in the environment
         let body = ChatBody {
-            model: MODEL.to_owned(),
-            max_tokens: Some(*MAX_TOKENS),
-            temperature: Some(*TEMPERATURE),
+            model: config.model,
+            max_tokens: Some(config.max_tokens),
+            temperature: Some(config.temperature),
             top_p: Some(0.95),
             n: Some(1),
             stream: Some(false),

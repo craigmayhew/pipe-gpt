@@ -1,6 +1,197 @@
-/// Defines which gpt model to use. Currently set to "gpt-4o"
-pub const MODEL: &str = "gpt-4o";
-/// Defines default maximum number of tokens available in conversation and response
-pub const MAX_TOKENS: &i32 = &4096;
-/// Defines default temperature of response
-pub const TEMPERATURE: &f32 = &0.6;
+use memoize::memoize;
+use serde::{Deserialize, Serialize};
+use std::fs;
+use std::path::PathBuf;
+
+// Helper functions for default values, used by #[serde(default = "...")]
+fn default_api_url() -> String {
+    "https://api.openai.com/v1/".to_string()
+}
+fn default_model() -> String {
+    "gpt-4o".to_string()
+}
+fn default_max_tokens() -> i32 {
+    4096
+}
+fn default_temperature() -> f32 {
+    0.6
+}
+
+/// Represents the configuration loaded from a YAML file.
+/// Fields use #[serde(default = "...")]] to ensure default values are used
+/// if they are missing from the configuration file.
+#[derive(Debug, Deserialize, Serialize, PartialEq, Clone)]
+pub struct AppConfig {
+    #[serde(default = "default_api_url")]
+    pub api_url: String,
+    #[serde(default = "default_model")]
+    pub model: String,
+    #[serde(default = "default_max_tokens")]
+    pub max_tokens: i32,
+    #[serde(default = "default_temperature")]
+    pub temperature: f32,
+}
+
+impl Default for AppConfig {
+    fn default() -> Self {
+        AppConfig {
+            api_url: default_api_url(),
+            model: default_model(),
+            max_tokens: default_max_tokens(),
+            temperature: default_temperature(),
+        }
+    }
+}
+
+/// Attempts to load the application configuration from a YAML file.
+/// It looks for the file at `~/.config/pipe-gpt/config.yaml`.
+/// If the file is not found or parsing fails, it returns a default configuration,
+/// merging any present values from the file with the defaults.
+
+#[memoize]
+pub fn load_config() -> AppConfig {
+    let mut config_path: PathBuf = match dirs::config_dir() {
+        Some(path) => path,
+        None => {
+            eprintln!("Could not determine XDG config directory. Using default configuration.");
+            return AppConfig::default();
+        },
+    };
+
+    println!("config_path: {:?}", config_path);
+
+    config_path.push("pipe-gpt"); // Your application's config directory
+    config_path.push("config.yaml"); // Your config file name
+
+    match fs::read_to_string(&config_path) {
+        Ok(content) => {
+            // Attempt to deserialize, merging with defaults for missing fields.
+            // If deserialization fails (e.g., malformed YAML), fallback to full default config.
+            match serde_yaml::from_str(&content) {
+                Ok(config) => {
+                    println!("Configuration loaded and merged from: {:?}", config_path);
+                    config
+                },
+                Err(e) => {
+                    eprintln!(
+                        "Error parsing config file {:?}: {}. Using default configuration.",
+                        config_path, e
+                    );
+                    AppConfig::default()
+                },
+            }
+        },
+        Err(e) => {
+            // If the file doesn't exist or can't be read, just use the default configuration.
+            eprintln!(
+                "Error reading config file {:?}: {}. Using default configuration.",
+                config_path, e
+            );
+            AppConfig::default()
+        },
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+    use tempfile::tempdir;
+
+    // Helper to set up a temporary config environment for tests
+    fn setup_temp_config(content: &str) -> (PathBuf, tempfile::TempDir) {
+        let temp_dir = tempdir().unwrap();
+        let config_app_dir = temp_dir.path().join("pipe-gpt");
+        std::fs::create_dir_all(&config_app_dir).unwrap();
+        let config_file_path = config_app_dir.join("config.yaml");
+
+        let mut file = std::fs::File::create(&config_file_path).unwrap();
+        file.write_all(content.as_bytes()).unwrap();
+
+        std::env::set_var("XDG_CONFIG_HOME", temp_dir.path());
+        (config_file_path, temp_dir)
+    }
+
+    // Helper to clean up temporary config environment
+    fn teardown_temp_config(temp_dir: tempfile::TempDir) {
+        std::env::remove_var("XDG_CONFIG_HOME");
+        temp_dir.close().unwrap();
+    }
+
+    #[test]
+    fn test_load_config_from_full_file() {
+        let config_content = r#"
+model: "gpt-3.5-turbo"
+api_url: "https://api.openai.com/v1/new_for_test"
+max_tokens: 2048
+temperature: 0.8
+        "#;
+        let (_config_file_path, temp_dir) = setup_temp_config(config_content);
+
+        let loaded_config = load_config();
+
+        assert_eq!(loaded_config.model, "gpt-3.5-turbo");
+        assert_eq!(
+            loaded_config.api_url,
+            "https://api.openai.com/v1/new_for_test"
+        );
+        assert_eq!(loaded_config.max_tokens, 2048);
+        assert_eq!(loaded_config.temperature, 0.8);
+
+        teardown_temp_config(temp_dir);
+    }
+
+    #[test]
+    fn test_load_config_partial_file_merges_defaults() {
+        let config_content = r#"
+model: "custom-model"
+max_tokens: 1000
+        "#; // temperature is missing
+        let (_config_file_path, temp_dir) = setup_temp_config(config_content);
+
+        let loaded_config = load_config();
+
+        assert_eq!(loaded_config.model, "custom-model");
+        assert_eq!(loaded_config.max_tokens, 1000);
+        assert_eq!(loaded_config.temperature, AppConfig::default().temperature); // Should use default temperature
+
+        teardown_temp_config(temp_dir);
+    }
+
+    #[test]
+    fn test_load_config_default_if_not_found() {
+        let temp_dir = tempdir().unwrap();
+        std::env::set_var("XDG_CONFIG_HOME", temp_dir.path());
+
+        let loaded_config = load_config();
+        assert_eq!(loaded_config, AppConfig::default());
+
+        teardown_temp_config(temp_dir);
+    }
+
+    #[test]
+    fn test_load_config_default_if_malformed() {
+        let config_content = r#"
+model: "malformed"
+max_tokens: not-a-number # This will cause a deserialization error
+temperature: 0.5
+        "#;
+        let (_config_file_path, temp_dir) = setup_temp_config(config_content);
+
+        let loaded_config = load_config();
+        assert_eq!(loaded_config, AppConfig::default()); // Expect fallback to default
+
+        teardown_temp_config(temp_dir);
+    }
+
+    #[test]
+    fn test_load_config_empty_file_uses_all_defaults() {
+        let config_content = r#""#; // Empty file
+        let (_config_file_path, temp_dir) = setup_temp_config(config_content);
+
+        let loaded_config = load_config();
+        assert_eq!(loaded_config, AppConfig::default()); // Expect all defaults
+
+        teardown_temp_config(temp_dir);
+    }
+}
