@@ -10,6 +10,8 @@ use openai_api_rust::{
 };
 use regex::Regex;
 
+use crate::config::models::load_config;
+
 pub enum AssistantPurpose {
     CodeReviewer,
     Default,
@@ -90,11 +92,13 @@ pub async fn send_to_gpt4(body: ChatBody) -> Result<String, reqwest::Error> {
     // debug log
     debug!("entered send_to_gpt4()");
 
-    // Load API key from environment OPENAI_API_KEY
+    let config = load_config();
+    let api_url = config.api_url;
+
     let api_key = std::env::var("AI_API_KEY")
         .map_err(|_| "Missing AI_API_KEY".to_string())
         .expect("Failed to read auth from environment");
-    let api_url = std::env::var("AI_API_URL").unwrap_or("https://api.openai.com/v1/".to_string());
+
     let auth = Auth::new(&api_key);
     let openai = OpenAI::new(auth, &api_url);
     let chat_completion = openai
