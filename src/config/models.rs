@@ -88,9 +88,6 @@ mod tests {
     use std::io::Write;
     use tempfile::tempdir;
 
-    // Helper to set up a temporary config environment for tests
-    // Returns the path to the 'pipe-gpt' config directory within the temp dir
-    // and the temp directory itself. Sets XDG_CONFIG_HOME.
     fn setup_temp_config_env() -> (PathBuf, tempfile::TempDir) {
         let temp_dir = tempdir().unwrap();
         let config_app_dir = temp_dir.path().join("pipe-gpt");
@@ -99,15 +96,12 @@ mod tests {
         (config_file_path, temp_dir)
     }
 
-    // Helper to write content to a temporary config file within the given config directory.
-    // Returns the full path to the created config file.
     fn write_config_to_temp_file(config_file_path: PathBuf, content: &str) -> PathBuf {
         let mut file = std::fs::File::create(&config_file_path).unwrap();
         file.write_all(content.as_bytes()).unwrap();
         config_file_path
     }
 
-    // Helper to clean up temporary config environment
     fn teardown_temp_config(temp_dir: tempfile::TempDir) {
         temp_dir.close().unwrap();
     }
@@ -141,7 +135,7 @@ temperature: 0.8
         let config_content = r#"
 model: custom-model
 max_tokens: 1000
-        "#; // temperature is missing
+        "#;
         let (config_app_dir, temp_dir) = setup_temp_config_env();
         write_config_to_temp_file(config_app_dir.clone(), config_content);
 
@@ -149,15 +143,13 @@ max_tokens: 1000
 
         assert_eq!(loaded_config.model, "custom-model");
         assert_eq!(loaded_config.max_tokens, 1000);
-        assert_eq!(loaded_config.temperature, AppConfig::default().temperature); // Should use default temperature
+        assert_eq!(loaded_config.temperature, AppConfig::default().temperature);
 
         teardown_temp_config(temp_dir);
     }
 
     #[test]
     fn test_load_config_default_if_not_found() {
-        // This test ensures that if no config file exists, defaults are used.
-        // So, we only set up the environment and *do not* write a config file.
         let (config_app_dir, temp_dir) = setup_temp_config_env();
 
         let loaded_config = get_config(&config_app_dir);
@@ -177,19 +169,19 @@ temperature: 0.5
         write_config_to_temp_file(config_app_dir.clone(), config_content);
 
         let loaded_config = get_config(&config_app_dir);
-        assert_eq!(loaded_config, AppConfig::default()); // Expect fallback to default
+        assert_eq!(loaded_config, AppConfig::default());
 
         teardown_temp_config(temp_dir);
     }
 
     #[test]
     fn test_load_config_empty_file_uses_all_defaults() {
-        let config_content = r#""#; // Empty file
+        let config_content = r#""#;
         let (config_app_dir, temp_dir) = setup_temp_config_env();
         write_config_to_temp_file(config_app_dir.clone(), config_content);
 
         let loaded_config = get_config(&config_app_dir);
-        assert_eq!(loaded_config, AppConfig::default()); // Expect all defaults
+        assert_eq!(loaded_config, AppConfig::default());
 
         teardown_temp_config(temp_dir);
     }
