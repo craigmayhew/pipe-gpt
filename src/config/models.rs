@@ -10,7 +10,7 @@ fn default_model() -> String {
     "gpt-4o".to_string()
 }
 fn default_max_tokens() -> i32 {
-    4096
+    8192
 }
 fn default_temperature() -> f32 {
     0.6
