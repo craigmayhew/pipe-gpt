@@ -32,7 +32,7 @@ temperature: 0.6
 - `cat main.rs | pipe-gpt -p "How would you improve this code? Include line numbers in your comments so I can tell where you mean."`
 - `cat main.rs | pipe-gpt -p "Is this code production ready? If yes reply 'Yes'. If no, then explain why not. Be concise."`
 - `cat file.json | pipe-gpt -p "Convert this JSON to YAML" > file.yaml`
-- `cat french.txt | pipe-gpt -p "Translate this to English please."` 
+- `cat french.txt | pipe-gpt -p "Translate this to English please."`
 - `git diff --staged | pipe-gpt -p "Code review this code change"`
  - `cat src/main.rs | pipe-gpt -p "improve the code and only output the replacement code as I will pipe the output directly back into a file, no explanations, just pure code please" > src/main.new.rs`
 
