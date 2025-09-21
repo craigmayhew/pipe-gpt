@@ -3,11 +3,27 @@ Pipe your content to gpt directly from the command line. A concept that allows f
 
 Installation via cargo `cargo install pipe-gpt`, build it locally via `cargo build --release`, or download from the releases page.
 
-Please note you will need an [OpenAI API Key](https://platform.openai.com/account/api-keys).
+Please note you will need an api key e.g. [OpenAI API Key](https://platform.openai.com/account/api-keys).
 
-### Set the open api key env var
- - in linux: `export OPENAI_API_KEY=sk-12345abc`
- - in windows powershell `$env:OPENAI_API_KEY = 'sk-12345abc'`
+### Set the API key env var
+ - The app reads AI_API_KEY first, then falls back to OPENAI_API_KEY
+ - in linux/macOS: `export AI_API_KEY=sk-12345abc` or `export OPENAI_API_KEY=sk-12345abc`
+ - in windows powershell `$env:AI_API_KEY = 'sk-12345abc'` or `$env:OPENAI_API_KEY = 'sk-12345abc'`
+
+## Configuration
+- Config file path: ~/.config/pipe-gpt/config.yaml (Linux/macOS) or %APPDATA%/pipe-gpt/config.yaml (Windows)
+- Fields and defaults:
+  - api_url: https://api.openai.com/v1/
+  - model: gpt-4o
+  - max_tokens: 8192
+  - temperature: 0.6
+- Example:
+```
+api_url: "https://api.openai.com/v1/"
+model: "gpt-4o"
+max_tokens: 2048
+temperature: 0.6
+```
 
 ## Use cases
 
