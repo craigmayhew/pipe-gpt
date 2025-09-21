@@ -6,9 +6,9 @@ Installation via cargo `cargo install pipe-gpt`, build it locally via `cargo bui
 Please note you will need an api key e.g. [OpenAI API Key](https://platform.openai.com/account/api-keys).
 
 ### Set the API key env var
- - The app reads AI_API_KEY first, then falls back to OPENAI_API_KEY
- - in linux/macOS: `export AI_API_KEY=sk-12345abc` or `export OPENAI_API_KEY=sk-12345abc`
- - in windows powershell `$env:AI_API_KEY = 'sk-12345abc'` or `$env:OPENAI_API_KEY = 'sk-12345abc'`
+ - The app reads AI_API_KEY
+ - in linux/macOS: `export AI_API_KEY=sk-12345abc`
+ - in windows powershell `$env:AI_API_KEY = 'sk-12345abc'`
 
 ## Configuration
 - Config file path: ~/.config/pipe-gpt/config.yaml (Linux/macOS) or %APPDATA%/pipe-gpt/config.yaml (Windows)
@@ -71,7 +71,7 @@ jobs:
       run: cargo test --verbose
     - name: GPT Code Review
       env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        AI_API_KEY: ${{ secrets.AI_API_KEY }}
       run: pwd && find . -path './target' -prune -o -name '*.rs' -exec echo {} \; -exec cat {} \; | ./target/debug/pipe-gpt -p "how would you improve this code? include line numbers in your comments so I can tell where you mean"
 ```
 
