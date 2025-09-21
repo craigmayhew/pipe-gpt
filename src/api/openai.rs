@@ -117,7 +117,6 @@ pub async fn send_to_gpt4(body: ChatBody) -> Result<String, reqwest::Error> {
 #[cfg(any(test, doc))]
 mod tests {
     use super::*;
-    use crate::config::models::*;
 
     /// Test that piped input is not detected
     #[cfg_attr(not(doc), test)]
