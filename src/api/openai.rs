@@ -10,6 +10,8 @@ use openai_api_rust::{
 };
 use regex::Regex;
 
+use crate::config::models::load_config;
+
 pub enum AssistantPurpose {
     CodeReviewer,
     Default,
@@ -90,9 +92,15 @@ pub async fn send_to_gpt4(body: ChatBody) -> Result<String, reqwest::Error> {
     // debug log
     debug!("entered send_to_gpt4()");
 
-    // Load API key from environment OPENAI_API_KEY
-    let auth = Auth::from_env().expect("Failed to read auth from environment");
-    let openai = OpenAI::new(auth, "https://api.openai.com/v1/");
+    let config = load_config();
+    let api_url = config.api_url;
+
+    let api_key = std::env::var("AI_API_KEY")
+        .map_err(|_| "Missing AI_API_KEY".to_string())
+        .expect("Failed to read auth from environment");
+
+    let auth = Auth::new(&api_key);
+    let openai = OpenAI::new(auth, &api_url);
     let chat_completion = openai
         .chat_completion_create(&body)
         .expect("chat completion failed");
@@ -129,11 +137,12 @@ mod tests {
     /// Test an API call using an API key
     #[cfg_attr(not(doc), tokio::test)]
     async fn test_send_to_gpt4() {
+        let config = load_config();
         // Note: This test requires a valid API key set in the environment
         let body = ChatBody {
-            model: MODEL.to_owned(),
-            max_tokens: Some(*MAX_TOKENS),
-            temperature: Some(*TEMPERATURE),
+            model: config.model,
+            max_tokens: Some(config.max_tokens),
+            temperature: Some(config.temperature),
             top_p: Some(0.95),
             n: Some(1),
             stream: Some(false),

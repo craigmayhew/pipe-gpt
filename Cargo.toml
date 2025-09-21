@@ -23,10 +23,15 @@ version = "0.4.0"
 [dependencies]
 atty = "0.2" # For determining if data is piped to the executable or not
 clap = { version = "4.4", features = ["cargo"] } # For command-line argument parsing
+dirs = "6.0.0"
 env_logger = "0.9" # logging macros
 log = "0.4" # logging macros
+memoize = "0.5.1"
 openai_api_rust = "0.1.9" # OpenAI API
 regex = "1.10.4"
 reqwest = "0.11" # For making HTTP requests
+serde = "1.0.219"
+serde_yaml = "0.9.34"
+tempfile = "3.20.0"
 termimad = "0.28" # For rendering text as markdown in terminal
 tokio = { version = "1.35", features = ["full"] } # For asynchronous runtime
