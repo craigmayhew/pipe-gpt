@@ -1,4 +1,3 @@
-use atty::Stream; // atty to determine if data is piped in or not
 use log::*; // logging
 use openai_api_rust::{
     // openai api
@@ -8,7 +7,7 @@ use openai_api_rust::{
     OpenAI,
     Role,
 };
-use regex::Regex;
+use std::io::IsTerminal; // determine if data is piped in or not
 
 use crate::config::models::load_config;
 
@@ -30,29 +29,50 @@ impl ToString for AssistantPurpose {
     }
 }
 
-/// Counts the approximate number of tokens in a given text string based on a simple regex pattern.
-/// This function estimates the number of tokens using two regex patterns:
-/// - `\w+` to match sequences of word characters
-/// - `[^\w\s]` to match individual non-word, non-space characters
+/// Counts the approximate number of tokens in a text by scanning characters.
+///
+/// Heuristic:
+/// - A contiguous run of ASCII-alphanumeric or underscore characters counts as 1 token
+/// - Each non-whitespace, non-alphanumeric symbol counts as 1 token
+///
+/// This is a rough estimate intended only to catch obviously large inputs.
 ///
 /// # Arguments
 ///
-/// * `text` - A reference to a string slice that holds the text to be tokenized.
+/// * `text` - The text to estimate tokens for.
 ///
 /// # Returns
 ///
-/// Returns the count of estimated tokens in the input text.
+/// An estimated token count.
 ///
 /// # Examples
 ///
 /// ```
 /// let sample_text = "Hello, world! This is a test to count tokens.";
 /// let token_count = count_tokens(sample_text);
-/// assert_eq!(token_count, 11);
+/// // token_count will be a rough estimate
 /// ```
 pub fn count_tokens(text: &str) -> usize {
-    let re = Regex::new(r"\w+|[^\w\s]").unwrap();
-    re.find_iter(text).count()
+    let mut count = 0usize;
+    let mut in_word = false;
+
+    for ch in text.chars() {
+        if ch.is_alphanumeric() || ch == '_' {
+            if !in_word {
+                in_word = true;
+                count += 1;
+            }
+        } else {
+            if in_word {
+                in_word = false;
+            }
+            if !ch.is_whitespace() {
+                count += 1;
+            }
+        }
+    }
+
+    count
 }
 
 /// # Create Conversation Vector
@@ -75,7 +95,7 @@ pub fn create_conversation(
     }
     // if data was piped into this application, add it to the conversation
     // This is useful even if the input is blank, as a form of debug, GPT will likely respond with ~"It looks like you forgot the data"
-    if !atty::is(Stream::Stdin) {
+    if !std::io::stdin().is_terminal() {
         conversation_messages.push(Message {
             role: Role::User,
             content: input.to_string(),
@@ -117,7 +137,6 @@ pub async fn send_to_gpt4(body: ChatBody) -> Result<String, reqwest::Error> {
 #[cfg(any(test, doc))]
 mod tests {
     use super::*;
-    use crate::config::models::*;
 
     /// Test that piped input is not detected
     #[cfg_attr(not(doc), test)]

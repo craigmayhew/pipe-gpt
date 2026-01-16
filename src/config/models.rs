@@ -1,7 +1,7 @@
-use memoize::memoize;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
+use std::sync::OnceLock;
 
 fn default_api_url() -> String {
     "https://api.openai.com/v1/".to_string()
@@ -64,22 +64,40 @@ fn get_config(config_path: &PathBuf) -> AppConfig {
     }
 }
 
-#[memoize]
+static APP_CONFIG: OnceLock<AppConfig> = OnceLock::new();
+
+/// Load the application configuration from the user's config directory.
+///
+/// This resolves the platform-specific configuration directory (e.g. ~/.config on Linux,
+/// ~/Library/Application Support on macOS, %APPDATA% on Windows), then loads and deserializes
+/// the file at "pipe-gpt/config.yaml".
+///
+/// The result is cached using a process-wide `OnceLock`, so subsequent calls are fast and
+/// return a cloned copy of the same initialized `AppConfig`. If the config file cannot be
+/// read or parsed, sensible defaults are returned.
+///
+/// Returns a fully-populated `AppConfig`.
 pub fn load_config() -> AppConfig {
-    let mut config_path: PathBuf = match dirs::config_dir() {
-        Some(path) => path,
-        None => {
-            eprintln!("Could not determine XDG config directory. Using default configuration.");
-            return AppConfig::default();
-        },
-    };
+    APP_CONFIG
+        .get_or_init(|| {
+            let mut config_path: PathBuf = match dirs::config_dir() {
+                Some(path) => path,
+                None => {
+                    eprintln!(
+                        "Could not determine XDG config directory. Using default configuration."
+                    );
+                    return AppConfig::default();
+                },
+            };
 
-    println!("config_path: {:?}", config_path);
+            println!("config_path: {:?}", config_path);
 
-    config_path.push("pipe-gpt");
-    config_path.push("config.yaml");
+            config_path.push("pipe-gpt");
+            config_path.push("config.yaml");
 
-    get_config(&config_path)
+            get_config(&config_path)
+        })
+        .clone()
 }
 
 #[cfg(test)]
