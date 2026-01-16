@@ -1,4 +1,3 @@
-use std::io::IsTerminal; // determine if data is piped in or not
 use log::*; // logging
 use openai_api_rust::{
     // openai api
@@ -8,6 +7,7 @@ use openai_api_rust::{
     OpenAI,
     Role,
 };
+use std::io::IsTerminal; // determine if data is piped in or not
 
 use crate::config::models::load_config;
 

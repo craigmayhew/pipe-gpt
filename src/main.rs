@@ -25,8 +25,8 @@
 //! git diff --staged | pipe-gpt -p "Code review this code change"
 //! ```
 
-use std::io::IsTerminal; // determine if data is piped in or not
 use log::*; // logging
+use std::io::IsTerminal; // determine if data is piped in or not
 use std::io::{self, Read}; // std io
 
 mod api;
