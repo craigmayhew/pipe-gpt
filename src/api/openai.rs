@@ -1,4 +1,4 @@
-use atty::Stream; // atty to determine if data is piped in or not
+use std::io::IsTerminal; // determine if data is piped in or not
 use log::*; // logging
 use openai_api_rust::{
     // openai api
@@ -95,7 +95,7 @@ pub fn create_conversation(
     }
     // if data was piped into this application, add it to the conversation
     // This is useful even if the input is blank, as a form of debug, GPT will likely respond with ~"It looks like you forgot the data"
-    if !atty::is(Stream::Stdin) {
+    if !std::io::stdin().is_terminal() {
         conversation_messages.push(Message {
             role: Role::User,
             content: input.to_string(),

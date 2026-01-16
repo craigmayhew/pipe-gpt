@@ -25,7 +25,7 @@
 //! git diff --staged | pipe-gpt -p "Code review this code change"
 //! ```
 
-use atty::Stream; // atty to determine if data is piped in or not
+use std::io::IsTerminal; // determine if data is piped in or not
 use log::*; // logging
 use std::io::{self, Read}; // std io
 
@@ -59,7 +59,7 @@ async fn main() {
     let mut input = String::new();
     // if data is being piped in
     // this check is necessary or we hang the whole program waiting for stdin when none arrives
-    if !atty::is(Stream::Stdin) {
+    if !io::stdin().is_terminal() {
         debug!("Attempt: read from stdin");
         io::stdin()
             .read_to_string(&mut input)
