@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 use std::sync::OnceLock;
+use log::debug;
 
 fn default_api_url() -> String {
     "https://api.openai.com/v1/".to_string()
@@ -43,7 +44,7 @@ fn get_config(config_path: &PathBuf) -> AppConfig {
     match fs::read_to_string(config_path) {
         Ok(content) => match serde_yaml::from_str(&content) {
             Ok(config) => {
-                println!("Configuration loaded and merged from: {:?}", config_path);
+                debug!("Configuration loaded and merged from: {:?}", config_path);
                 config
             },
             Err(e) => {
@@ -90,7 +91,7 @@ pub fn load_config() -> AppConfig {
                 },
             };
 
-            println!("config_path: {:?}", config_path);
+            log::debug!("config_path: {:?}", config_path);
 
             config_path.push("pipe-gpt");
             config_path.push("config.yaml");
