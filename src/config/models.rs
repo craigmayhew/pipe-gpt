@@ -1,8 +1,8 @@
+use log::debug;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 use std::sync::OnceLock;
-use log::debug;
 
 fn default_api_url() -> String {
     "https://api.openai.com/v1/".to_string()
