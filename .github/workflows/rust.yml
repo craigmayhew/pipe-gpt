@@ -43,3 +43,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check formatting
         run: cargo fmt -- --check
+
+  cargo-machete:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Run cargo-machete on workspace
+        uses: bnjbvr/cargo-machete@7959c845782fed02ee69303126d4a12d64f1db18 # v0.9.1
+        with:
+          # Point machete at the Rust workspace directory
+          args: .
