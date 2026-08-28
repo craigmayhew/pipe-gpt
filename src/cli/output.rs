@@ -2,9 +2,9 @@
 use termimad::{crossterm::style::Color::Yellow, gray, MadSkin};
 /// # Render in Markdown, Plaintext or Error
 ///
-/// Takes a result from the Reqwest API call
-pub fn markdown_plaintext_or_error(
-    gpt_result: Result<String, reqwest::Error>,
+/// Takes a result from the OpenAI API call
+pub fn markdown_plaintext_or_error<E: std::fmt::Display>(
+    gpt_result: Result<String, E>,
     render_markdown: bool,
 ) {
     match gpt_result {

@@ -108,27 +108,25 @@ pub fn create_conversation(
 /// # Send Request To Openai API
 ///
 /// Loads the OPENAI_API_KEY environment variable, connects to OpenAI API, sends chat
-pub async fn send_to_gpt4(body: ChatBody) -> Result<String, reqwest::Error> {
+pub async fn send_to_gpt4(body: ChatBody) -> Result<String, String> {
     // debug log
     debug!("entered send_to_gpt4()");
 
     let config = load_config();
     let api_url = config.api_url;
 
-    let api_key = std::env::var("AI_API_KEY")
-        .map_err(|_| "Missing AI_API_KEY".to_string())
-        .expect("Failed to read auth from environment");
+    let api_key = std::env::var("AI_API_KEY").map_err(|_| "Missing AI_API_KEY".to_string())?;
 
     let auth = Auth::new(&api_key);
     let openai = OpenAI::new(auth, &api_url);
     let chat_completion = openai
         .chat_completion_create(&body)
-        .expect("chat completion failed");
-    let choice = chat_completion.choices;
-    let message = &choice[0]
-        .message
-        .as_ref()
-        .expect("Failed to read message from API");
+        .map_err(|error| error.to_string())?;
+    let message = chat_completion
+        .choices
+        .first()
+        .and_then(|choice| choice.message.as_ref())
+        .ok_or_else(|| "OpenAI response did not contain a message".to_string())?;
     // debug log
     debug!("message recieved {:?}", message);
 
